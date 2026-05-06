@@ -6,37 +6,11 @@ product
 
 ## Users
 
-The target audience for Viictor is competitive amateur tennis players (adults and juniors) who want flexible, self-organised matches with real stakes (entry fees, prize money), plus reputation and rating attached.
-
-### Primary target audience
-
-Amateur club and recreational players who already play socially but want more structured competition through monthly knockouts, box leagues, and Head 2 Head challenges.
-
-Players comfortable paying entry fees and competing for prize money or vouchers, and who care enough about results to report scores properly and on time.
-
-Adults who can book and pay for courts, bring balls, and arrange logistics themselves, preferring flexible scheduling over fixed club-organised league nights.
-
-### Secondary audience segments
-
-Juniors (and their parents or coaches) looking for extra match play outside official tournaments, with emphasis on experience and non-cash rewards.
-
-"Serious social" players who want rankings, star ratings, and reputational signals (5-star rating, red flags, disputes) to matter in their local tennis community.
-
-Players active on social media and email, who respond well to newsletters, Facebook, Instagram, LinkedIn presence, and ongoing updates.
-
-### Positioning notes
-
-Core value: "Play on your own schedule, against real opponents, for real stakes, while building a trusted competitive profile and ranking."
-
-Core pain points addressed: lack of flexible but meaningful competition, no simple way to play for prize money locally, and no central record of conduct (ratings, red flags, disputes).
+Amateur and recreational tennis players at all competitive levels — ranging from juniors (11/u, 13/u, 15/u) through to seniors (40s, 50s, 60s, 70s, 80s), plus wheelchair players and mixed-gender brackets. Players are active, socially motivated, and competition-driven. They use the app on-court and between sessions: checking match schedules, reviewing tournament draws, accepting challenges, and tracking their ranking. Their primary context is mobile, usually on the go. They want to feel like serious players, not hobbyists — even if they're recreational. The job to be done: compete against players at my level, track my progress, and win.
 
 ## Product Purpose
 
-Viictor is a competitive tennis platform where players enter level-based tournaments and Head 2 Head challenges, organise their own matches, and win prize money. This use case focuses on redesigning the existing Home page and Tournament page so the core competition experience is clearer, faster to act on, and more trustworthy.
-
-Three formats: Monthly Knockout, Box Leagues (round robin), and Head 2 Head challenges (unlocked after earning a verified Viictor rating). Prize money is paid via PayPal. Players have profiles with rankings, ratings, match history, and earnings. The platform is self-managed, no central venue, players coordinate home and away court logistics.
-
-Success looks like: players returning for every new tournament cycle, challenging each other frequently, reporting results on time, and feeling proud to show the app to a fellow player.
+Viictor is a competitive tennis platform where players enter level-based tournaments and Head 2 Head challenges, organise their own matches, and win prize money. Three formats: Monthly Knockout, Box Leagues (round robin), and Head 2 Head challenges (unlocked after earning a verified Viictor rating). Prize money is paid via PayPal. Players have profiles with rankings, ratings, match history, and earnings. The platform is self-managed — no central venue, players coordinate home/away court. Success looks like: players returning for every new tournament cycle, challenging each other frequently, and feeling proud to show the app to a fellow player.
 
 ## Brand Personality
 
