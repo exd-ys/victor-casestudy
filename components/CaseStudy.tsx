@@ -8,24 +8,43 @@ import {
   useEffect,
   useMemo,
   useRef,
-  useState
+  useState,
 } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 type ThemeMode = "light" | "dark";
 type NavMode = "hero" | "default" | "dark";
+type ExpandedImage = { src: string; alt: string; title: string } | null;
 
 const problems = [
-  ["Split Personality", "Headers, forms, and screen treatments changed from place to place, so the app felt less confident than the product behind it."],
-  ["No Next Move", "The dashboard reported stats, but did not guide a player toward the match, challenge, or tournament that needed attention."],
-  ["Harder Scanning", "Tournament details were present, but the layout did not make the choice feel quick or obvious."]
+  [
+    "Split Personality",
+    "Headers, forms, and screen treatments changed from place to place, so players had to relearn the interface on each screen and trust dropped.",
+  ],
+  [
+    "No Next Move",
+    "The dashboard showed stats without a clear next action, so players lost momentum when trying to continue into a challenge or tournament.",
+  ],
+  [
+    "Harder Scanning",
+    "Tournament details existed, but the layout slowed comparison, making it harder for players to quickly choose the right event.",
+  ],
 ];
 
 const solutionMoves = [
-  ["Light where it matters", "The primary app surface becomes brighter because the real use case is outdoors, between games, often one-handed."],
-  ["Green with restraint", "Brand color becomes a signal for rank, action, and live status instead of a blanket sports-app treatment."],
-  ["Decisions first", "Rows, hierarchy, and bottom navigation are shaped around what players need to compare or do next."]
+  [
+    "Light where it matters",
+    "The primary app surface is brighter for outdoor, between-game usage. Players can read status and match details faster in sunlight, with fewer missed actions and less visual strain.",
+  ],
+  [
+    "Green with restraint",
+    "Green is reserved for rank, primary actions, and live status. This makes important signals easier to notice quickly, so players can decide with more confidence.",
+  ],
+  [
+    "Decisions first",
+    "Rows, hierarchy, and bottom navigation prioritize what to compare and what to do next. Players spend less time searching and move to the next match step faster.",
+  ],
 ];
 
 const comparisons = [
@@ -36,8 +55,14 @@ const comparisons = [
     afterDark: "/images/new-victor-dashboard-dark.png",
     beforeAlt: "Original Viictor dashboard screen",
     afterAlt: "Redesigned Viictor dashboard screen",
-    beforeNotes: ["Stats carried equal weight.", "The next action had no home."],
-    afterNotes: ["Ranking becomes the visual anchor.", "A next-action area gives the screen momentum."]
+    beforeNotes: [
+      "Stats carried equal visual weight, so priority was unclear.",
+      "Players had no obvious next action from Home.",
+    ],
+    afterNotes: [
+      "Ranking becomes the visual anchor for faster orientation.",
+      "A dedicated next-action area helps players move into challenges or tournaments faster.",
+    ],
   },
   {
     title: "Tournament List",
@@ -46,22 +71,37 @@ const comparisons = [
     afterDark: "/images/new-victor-tournament-dark.png",
     beforeAlt: "Original Viictor tournament screen",
     afterAlt: "Redesigned Viictor tournament list",
-    beforeNotes: ["Entries were slower to compare.", "Prize, status, and timing did not guide choice."],
-    afterNotes: ["Rows surface fee, date, status, and prize together.", "Filters make the list feel more intentional."]
-  }
+    beforeNotes: [
+      "Entries were slower to compare at a glance.",
+      "Prize, status, and timing were present but did not guide quick decisions.",
+    ],
+    afterNotes: [
+      "Rows surface fee, date, status, and prize in one scan path.",
+      "Clearer filtering helps players find the right tournament with less effort.",
+    ],
+  },
 ];
 
 const progressSignals = [
-  ["Coherence", "The redesigned screens now feel like one product language."],
-  ["Momentum", "The first screen can point to the next useful action."],
-  ["Scanability", "Tournament information is arranged for comparison, not decoration."]
+  [
+    "Coherence",
+    "Home and Tournament now follow one system, reducing interpretation effort between screens.",
+  ],
+  [
+    "Momentum",
+    "The Home screen now points players to the next competitive action instead of ending at passive stats.",
+  ],
+  [
+    "Scanability",
+    "Tournament rows are structured for faster comparison of fee, timing, and status.",
+  ],
 ];
 
 const stillToTest = [
-  "Do players accept more challenges?",
-  "Do tournament entries become easier to complete?",
-  "Do players return more often to check progress?",
-  "Does the large ranking treatment motivate or discourage?"
+  "Time to first meaningful action from Home (challenge, entry, or results check) decreases.",
+  "Tournament entry conversion from list view increases.",
+  "Challenge acceptance rate increases after clearer Home prioritization.",
+  "Weekly return rate improves after clearer ranking and status visibility.",
 ];
 
 export default function CaseStudy() {
@@ -70,14 +110,16 @@ export default function CaseStudy() {
   const [activeProblemIndex, setActiveProblemIndex] = useState(0);
   const [activeOutputTab, setActiveOutputTab] = useState(0);
   const [navMode, setNavMode] = useState<NavMode>("hero");
+  const [expandedAfterImage, setExpandedAfterImage] =
+    useState<ExpandedImage>(null);
 
   const currentImages = useMemo(
     () =>
       comparisons.map((item) => ({
         ...item,
-        after: theme === "light" ? item.afterLight : item.afterDark
+        after: theme === "light" ? item.afterLight : item.afterDark,
       })),
-    [theme]
+    [theme],
   );
 
   useEffect(() => {
@@ -100,14 +142,13 @@ export default function CaseStudy() {
 
       // -- Hero (mount, no ScrollTrigger) -----------------------------
       const heroTl = gsap.timeline({ delay: 0.1 });
-      heroTl
-        .to(".hero-drift", {
-          opacity: 1,
-          y: 0,
-          duration: 0.9,
-          stagger: 0.12,
-          ease: "expo.out"
-        })
+      heroTl.to(".hero-drift", {
+        opacity: 1,
+        y: 0,
+        duration: 0.9,
+        stagger: 0.12,
+        ease: "expo.out",
+      });
 
       // -- Generic drift-in loop (Output SectionHeader + any remaining) -
       gsap.utils.toArray<HTMLElement>(".drift-in").forEach((el) => {
@@ -116,7 +157,7 @@ export default function CaseStudy() {
           y: 0,
           duration: 0.8,
           ease: "expo.out",
-          scrollTrigger: { trigger: el, start: "top 86%", once: true }
+          scrollTrigger: { trigger: el, start: "top 86%", once: true },
         });
       });
 
@@ -124,12 +165,33 @@ export default function CaseStudy() {
       const overviewSection = document.querySelector("#overview");
       if (overviewSection) {
         const tl = gsap.timeline({
-          scrollTrigger: { trigger: overviewSection, start: "top 82%", once: true }
+          scrollTrigger: {
+            trigger: overviewSection,
+            start: "top 82%",
+            once: true,
+          },
         });
-        tl.to(".overview-eyebrow", { opacity: 1, y: 0, duration: 0.55, ease: "expo.out" })
-          .to(".overview-title", { opacity: 1, y: 0, duration: 0.75, ease: "expo.out" }, "-=0.3")
-          .to(".overview-body", { opacity: 1, y: 0, duration: 0.8, ease: "expo.out" }, "-=0.55")
-          .to(".overview-aside", { opacity: 1, y: 0, scale: 1, duration: 1, ease: "expo.out" }, "-=0.6");
+        tl.to(".overview-eyebrow", {
+          opacity: 1,
+          y: 0,
+          duration: 0.55,
+          ease: "expo.out",
+        })
+          .to(
+            ".overview-title",
+            { opacity: 1, y: 0, duration: 0.75, ease: "expo.out" },
+            "-=0.3",
+          )
+          .to(
+            ".overview-body",
+            { opacity: 1, y: 0, duration: 0.8, ease: "expo.out" },
+            "-=0.55",
+          )
+          .to(
+            ".overview-aside",
+            { opacity: 1, y: 0, scale: 1, duration: 1, ease: "expo.out" },
+            "-=0.6",
+          );
       }
 
       // -- Solution - header then staggered cards --------------------
@@ -139,7 +201,11 @@ export default function CaseStudy() {
         const cards = solutionSection.querySelectorAll(".deck-reveal");
 
         const tl = gsap.timeline({
-          scrollTrigger: { trigger: solutionSection, start: "top 80%", once: true }
+          scrollTrigger: {
+            trigger: solutionSection,
+            start: "top 80%",
+            once: true,
+          },
         });
 
         if (header) {
@@ -147,7 +213,11 @@ export default function CaseStudy() {
         }
 
         cards.forEach((card, i) => {
-          tl.to(card, { opacity: 1, y: 0, duration: 0.7, ease: "expo.out" }, i === 0 ? "-=0.35" : ">-0.15");
+          tl.to(
+            card,
+            { opacity: 1, y: 0, duration: 0.7, ease: "expo.out" },
+            i === 0 ? "-=0.35" : ">-0.15",
+          );
         });
       }
 
@@ -195,20 +265,42 @@ export default function CaseStudy() {
         const items = progressSection.querySelectorAll(".progress-item");
 
         const tl = gsap.timeline({
-          scrollTrigger: { trigger: progressSection, start: "top 82%", once: true }
+          scrollTrigger: {
+            trigger: progressSection,
+            start: "top 82%",
+            once: true,
+          },
         });
 
         if (leftCol) {
           tl.to(leftCol, { opacity: 1, y: 0, duration: 0.9, ease: "expo.out" });
         }
         if (scoreLine) {
-          tl.to(scoreLine, { scaleX: 1, duration: 0.8, ease: "expo.out" }, "-=0.4");
+          tl.to(
+            scoreLine,
+            { scaleX: 1, duration: 0.8, ease: "expo.out" },
+            "-=0.4",
+          );
         }
         if (creamBox) {
-          tl.to(creamBox, { opacity: 1, y: 0, duration: 0.8, ease: "expo.out" }, "-=0.3");
+          tl.to(
+            creamBox,
+            { opacity: 1, y: 0, duration: 0.8, ease: "expo.out" },
+            "-=0.3",
+          );
         }
         if (items.length) {
-          tl.to(items, { opacity: 1, y: 0, duration: 0.45, stagger: 0.08, ease: "expo.out" }, "-=0.2");
+          tl.to(
+            items,
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.45,
+              stagger: 0.08,
+              ease: "expo.out",
+            },
+            "-=0.2",
+          );
         }
       }
     }, root);
@@ -229,12 +321,31 @@ export default function CaseStudy() {
           return entry.isIntersecting ? "hero" : "default";
         });
       },
-      { threshold: 0.05 }
+      { threshold: 0.05 },
     );
 
     observer.observe(heroSection);
     return () => observer.disconnect();
   }, []);
+
+  useEffect(() => {
+    if (!expandedAfterImage) return;
+
+    const onKeyDown = (event: globalThis.KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setExpandedAfterImage(null);
+      }
+    };
+
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [expandedAfterImage]);
 
   return (
     <main ref={root} className="case-page min-h-screen text-[var(--forest)]">
@@ -260,27 +371,69 @@ export default function CaseStudy() {
               navMode === "dark" ? "text-white/70" : "text-[var(--soft)]"
             }`}
           >
-            <a href="#problem" className={navMode === "dark" ? "hover:text-white" : "hover:text-[var(--forest)]"}>Problem</a>
-            <a href="#solution" className={navMode === "dark" ? "hover:text-white" : "hover:text-[var(--forest)]"}>Solution</a>
-            <a href="#output" className={navMode === "dark" ? "hover:text-white" : "hover:text-[var(--forest)]"}>Output</a>
-            <a href="#progress" className={navMode === "dark" ? "hover:text-white" : "hover:text-[var(--forest)]"}>Progress</a>
+            <a
+              href="#problem"
+              className={
+                navMode === "dark"
+                  ? "hover:text-white"
+                  : "hover:text-[var(--forest)]"
+              }
+            >
+              Problem
+            </a>
+            <a
+              href="#solution"
+              className={
+                navMode === "dark"
+                  ? "hover:text-white"
+                  : "hover:text-[var(--forest)]"
+              }
+            >
+              Solution
+            </a>
+            <a
+              href="#output"
+              className={
+                navMode === "dark"
+                  ? "hover:text-white"
+                  : "hover:text-[var(--forest)]"
+              }
+            >
+              Output
+            </a>
+            <a
+              href="#progress"
+              className={
+                navMode === "dark"
+                  ? "hover:text-white"
+                  : "hover:text-[var(--forest)]"
+              }
+            >
+              Progress
+            </a>
           </nav>
         </div>
       </header>
 
-      <section id="top" className="relative min-h-[760px] overflow-visible px-5 pt-24 sm:min-h-[840px] sm:px-8 lg:min-h-[900px] lg:px-10 lg:pt-28">
+      <section
+        id="top"
+        className="relative min-h-[760px] overflow-visible px-5 pt-24 sm:min-h-[840px] sm:px-8 lg:min-h-[900px] lg:px-10 lg:pt-28"
+      >
         <div className="relative mx-auto max-w-7xl">
           {/* Hero copy centered */}
           <div className="hero-drift relative z-10 flex flex-col items-center gap-7 text-center">
             <p className="font-bold text-[clamp(1rem,1.5vw,1.5rem)] leading-[1.5] text-[var(--green)]">
-              Viictor App Redesign
+              Viictor Home + Tournament Redesign
             </p>
-            <h1 className="display-sport max-w-3xl text-[clamp(3.2rem,7vw,6.75rem)] text-[var(--forest)]">
-              Right product. Wrong face.
+            <h1 className="display-sport max-w-3xl text-[clamp(2.4rem,5.2vw,4.8rem)] text-[var(--forest)]">
+              Strong product.
+              <br />
+              Clearer experience.
             </h1>
             <p className="max-w-2xl text-center text-[clamp(1rem,1.5vw,1.5rem)] leading-[1.5] text-[var(--soft)]">
-              Redesigning the match-day experience for players who compete
-              together, creating a clearer first impression and a more direct path to action.
+              We redesigned the existing Home and Tournament pages to make key
+              actions easier to find, improve outdoor readability, and create
+              one consistent visual system without changing core features.
             </p>
           </div>
 
@@ -291,7 +444,10 @@ export default function CaseStudy() {
         </div>
       </section>
 
-      <section id="overview" className="relative px-5 pb-36 pt-80 sm:px-8 sm:pb-44 sm:pt-88 lg:px-10 lg:pb-52 lg:pt-104">
+      <section
+        id="overview"
+        className="relative px-5 pb-36 pt-80 sm:px-8 sm:pb-44 sm:pt-88 lg:px-10 lg:pb-52 lg:pt-104"
+      >
         <div className="mx-auto max-w-6xl">
           <div className="overview-grid">
             {/* Left column: label + heading + body */}
@@ -300,11 +456,15 @@ export default function CaseStudy() {
                 Overview
               </p>
               <h2 className="overview-title display-sport text-[clamp(2rem,3.33vw,3rem)]">
-                No new features, just about making the existing ones easier to trust.
+                Same features, clearer decisions.
               </h2>
               <p className="overview-body text-[clamp(1rem,1.5vw,1.25rem)] leading-[1.5] text-[var(--soft)]">
-                Viictor is a match-day app for amateur players. The redesign simplifies
-                the system, clarifies the first screen, and makes tournaments easier to compare.
+                Viictor supports competitive tennis players across adults and
+                juniors, including serious social players and junior pathways
+                supported by parents or coaches. This redesign focuses on the
+                existing Home and Tournament pages, so players can understand
+                status faster, choose their next action faster, and trust what
+                they see at a glance.
               </p>
             </div>
             {/* Right column: phone mockup */}
@@ -327,7 +487,10 @@ export default function CaseStudy() {
         style={{ background: "linear-gradient(to bottom, #141514, #161b18)" }}
       >
         {/* Background texture */}
-        <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+        <div
+          className="pointer-events-none absolute inset-0"
+          aria-hidden="true"
+        >
           <Image
             src="/images/problem-section-bg.png"
             alt=""
@@ -344,32 +507,32 @@ export default function CaseStudy() {
             {/* Left: centered phone mockup */}
             <div className="problem-sticky">
               <div className="problem-phone-frame">
-              <div className="problem-images mockup-wrap">
-                {/* Image 1: visible for the intro and dashboard issues */}
-                <figure
+                <div className="problem-images mockup-wrap">
+                  {/* Image 1: visible for the intro and dashboard issues */}
+                  <figure
                     className={`problem-image ${activeProblemIndex <= 2 ? "problem-image--active" : ""}`}
-                >
-                  <Image
-                    src={comparisons[0].before}
-                    alt={comparisons[0].beforeAlt}
-                    width={380}
-                    height={760}
-                    className="w-full object-contain"
-                  />
-                </figure>
-                {/* Image 2: visible for the tournament scanning issue */}
-                <figure
+                  >
+                    <Image
+                      src={comparisons[0].before}
+                      alt={comparisons[0].beforeAlt}
+                      width={380}
+                      height={760}
+                      className="w-full object-contain"
+                    />
+                  </figure>
+                  {/* Image 2: visible for the tournament scanning issue */}
+                  <figure
                     className={`problem-image ${activeProblemIndex >= 3 ? "problem-image--active" : ""}`}
-                >
-                  <Image
-                    src={comparisons[1].before}
-                    alt={comparisons[1].beforeAlt}
-                    width={380}
-                    height={760}
-                    className="w-full object-contain"
-                  />
-                </figure>
-              </div>
+                  >
+                    <Image
+                      src={comparisons[1].before}
+                      alt={comparisons[1].beforeAlt}
+                      width={380}
+                      height={760}
+                      className="w-full object-contain"
+                    />
+                  </figure>
+                </div>
               </div>
             </div>
 
@@ -384,11 +547,13 @@ export default function CaseStudy() {
                       Problem
                     </p>
                     <h2 className="display-sport text-[clamp(2rem,3.33vw,3rem)] text-[var(--cream)]">
-                      The ingredients were right; the interface undermined trust.
+                      The ingredients were right; the interface undermined
+                      trust.
                     </h2>
                     <p className="text-[clamp(1rem,1.5vw,1.25rem)] leading-[1.55] text-[oklch(0.6_0.012_145)]">
-                      The old experience needed clearer, more confident visuals, and a stronger
-                      sense of what comes next.
+                      Core features were already in place, but players spent
+                      extra effort understanding screens, finding next steps,
+                      and comparing options under match-day pressure.
                     </p>
                   </article>
                   <div className="problem-points-group">
@@ -401,14 +566,18 @@ export default function CaseStudy() {
                         >
                           <h3
                             className={`display-sport text-[clamp(1.5rem,2.78vw,2.5rem)] leading-[1.15] transition-colors duration-500 ${
-                              isActive ? "text-[var(--cream)]" : "text-[#474747]"
+                              isActive
+                                ? "text-[var(--cream)]"
+                                : "text-[#474747]"
                             }`}
                           >
                             {title}
                           </h3>
                           <p
                             className={`text-[clamp(1rem,1.5vw,1.25rem)] leading-[1.55] transition-colors duration-500 ${
-                              isActive ? "text-[oklch(0.6_0.012_145)]" : "text-[#3d3d3d]"
+                              isActive
+                                ? "text-[oklch(0.6_0.012_145)]"
+                                : "text-[#3d3d3d]"
                             }`}
                           >
                             {body}
@@ -431,7 +600,7 @@ export default function CaseStudy() {
               centered
               eyebrow="Solution"
               title="Design for clarity, not decoration."
-              body="The new direction uses quieter surfaces and clearer information order."
+              body="The new direction improves readability, decision speed, and confidence in each next step, especially for players coordinating competitive matches on the go."
             />
           </div>
           <div className="solution-stack">
@@ -448,12 +617,8 @@ export default function CaseStudy() {
                     <span>{isDark ? "System" : "Principle"}</span>
                   </div>
                   <div className="solution-card__content">
-                    <h3 className="display-sport">
-                      {title}
-                    </h3>
-                    <p>
-                      {body}
-                    </p>
+                    <h3 className="display-sport">{title}</h3>
+                    <p>{body}</p>
                   </div>
                 </article>
               );
@@ -475,9 +640,7 @@ export default function CaseStudy() {
                     key={c.title}
                     onClick={() => setActiveOutputTab(i)}
                     className={`sport-label output-tab ${
-                      activeOutputTab === i
-                        ? "output-tab--active"
-                        : ""
+                      activeOutputTab === i ? "output-tab--active" : ""
                     }`}
                   >
                     {c.title}
@@ -486,7 +649,9 @@ export default function CaseStudy() {
               </div>
               <ThemeToggle
                 theme={theme}
-                onToggle={() => setTheme((value) => (value === "light" ? "dark" : "light"))}
+                onToggle={() =>
+                  setTheme((value) => (value === "light" ? "dark" : "light"))
+                }
                 compact
               />
             </div>
@@ -497,36 +662,48 @@ export default function CaseStudy() {
               key={activeOutputTab}
               item={currentImages[activeOutputTab]}
               theme={theme}
-              onToggle={() => setTheme((value) => (value === "light" ? "dark" : "light"))}
+              onToggle={() =>
+                setTheme((value) => (value === "light" ? "dark" : "light"))
+              }
+              onOpenAfter={(src, alt, title) =>
+                setExpandedAfterImage({ src, alt, title })
+              }
             />
           </div>
         </div>
       </section>
 
+      {false && (
       <section id="progress" className="px-5 py-20 sm:px-8 lg:px-10 lg:py-28">
         <div className="mx-auto max-w-6xl border-t border-[var(--line)] pt-16">
           <div className="grid gap-12 lg:grid-cols-[0.8fr_1fr]">
             <div className="progress-left">
-              <p className="sport-label text-[var(--green)]">
-                Progress
-              </p>
+              <p className="sport-label text-[var(--green)]">Progress</p>
               <h2 className="display-sport mt-4 max-w-xl text-[clamp(1.9rem,3.45vw,3.15rem)]">
                 Progress, not proof.
               </h2>
               <p className="mt-6 max-w-xl text-[0.98rem] leading-7 text-[var(--soft)] sm:text-[1.05rem]">
-                The redesign gives the product a clearer direction. Whether it
-                improves player behavior still needs validation with real use.
+                The redesign improves clarity and decision flow by design. The
+                next step is validating behavior change with measurable outcomes
+                tied to action speed, conversion, and return usage.
               </p>
               <div className="score-fill mt-8 h-px w-16 origin-left bg-[var(--green)]" />
             </div>
 
             <div className="grid gap-10">
               <div className="progress-cream rounded-[1.5rem] bg-[var(--cream)] p-6 sm:p-8">
-                <h3 className="text-lg font-medium">What is directionally better</h3>
+                <h3 className="text-lg font-medium">
+                  What is directionally better
+                </h3>
                 <div className="mt-5 divide-y divide-[var(--line)]">
                   {progressSignals.map(([title, body]) => (
-                    <div key={title} className="grid gap-2 py-5 sm:grid-cols-[0.42fr_1fr]">
-                      <div className="font-medium text-[var(--forest)]">{title}</div>
+                    <div
+                      key={title}
+                      className="grid gap-2 py-5 sm:grid-cols-[0.42fr_1fr]"
+                    >
+                      <div className="font-medium text-[var(--forest)]">
+                        {title}
+                      </div>
                       <p className="leading-7 text-[var(--soft)]">{body}</p>
                     </div>
                   ))}
@@ -534,10 +711,15 @@ export default function CaseStudy() {
               </div>
 
               <div>
-                <h3 className="text-lg font-medium">Still to test</h3>
+                <h3 className="text-lg font-medium">
+                  Impact hypotheses to validate
+                </h3>
                 <ul className="mt-5 grid gap-3 text-[var(--soft)] sm:grid-cols-2">
                   {stillToTest.map((item) => (
-                    <li key={item} className="progress-item flex items-center gap-3">
+                    <li
+                      key={item}
+                      className="progress-item flex items-center gap-3"
+                    >
                       <span className="h-1.5 w-1.5 rounded-full bg-[var(--green)]" />
                       <span>{item}</span>
                     </li>
@@ -548,6 +730,44 @@ export default function CaseStudy() {
           </div>
         </div>
       </section>
+      )}
+
+      {expandedAfterImage ? (
+        <div
+          className="fixed inset-0 z-[70] flex items-center justify-center bg-[oklch(0.2_0.04_145/.82)] p-4 backdrop-blur-sm sm:p-8"
+          onClick={() => setExpandedAfterImage(null)}
+          role="dialog"
+          aria-modal="true"
+          aria-label={`Expanded ${expandedAfterImage.title} redesign preview`}
+        >
+          <div
+            className="relative w-full max-w-6xl rounded-2xl border border-[oklch(0.85_0.02_145/.35)] bg-gray-200 p-4 sm:p-6"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="mb-3 flex items-center justify-between gap-4">
+              <p className="text-sm font-semibold tracking-[0.05em] text-[var(--soft)] uppercase">
+                Expanded After Screen · {expandedAfterImage.title}
+              </p>
+              <button
+                type="button"
+                onClick={() => setExpandedAfterImage(null)}
+                className="rounded-full border border-[var(--line)] px-3 py-1 text-sm font-semibold text-[var(--forest)] transition hover:bg-[var(--cream)]"
+              >
+                Close
+              </button>
+            </div>
+            <div className="relative flex max-h-[82vh] min-h-[320px] items-center justify-center">
+              <Image
+                src={expandedAfterImage.src}
+                alt={expandedAfterImage.alt}
+                width={1200}
+                height={2400}
+                className="max-h-[78vh] w-auto max-w-full object-contain"
+              />
+            </div>
+          </div>
+        </div>
+      ) : null}
     </main>
   );
 }
@@ -591,7 +811,7 @@ function RevealSlider() {
         onMouseMove={updateFromMouse}
         onFocus={() => setPosition(58)}
         onKeyDown={handleKeyDown}
-        className="reveal-stage relative mx-auto aspect-[1080/1920] max-h-[560px] max-w-[350px] cursor-ew-resize overflow-visible bg-transparent outline-none focus-visible:ring-2 focus-visible:ring-[var(--green)]"
+        className="reveal-stage relative mx-auto aspect-[1080/1920] max-h-[680px] max-w-[430px] cursor-ew-resize overflow-visible bg-transparent outline-none focus-visible:ring-2 focus-visible:ring-[var(--green)]"
       >
         <Image
           src="/images/old-dashboard-mockup.png"
@@ -634,7 +854,9 @@ function RevealSlider() {
       </div>
       <p
         className="slider-hint mt-4 text-center text-xs font-medium tracking-[0.06em] text-[var(--soft)]"
-        style={hinted ? { opacity: 0, transition: "opacity 0.4s ease" } : undefined}
+        style={
+          hinted ? { opacity: 0, transition: "opacity 0.4s ease" } : undefined
+        }
         aria-hidden="true"
       >
         Drag to compare
@@ -643,14 +865,13 @@ function RevealSlider() {
   );
 }
 
-
 function SectionHeader({
   eyebrow,
   title,
   body,
   dark = false,
   centered = false,
-  className = ""
+  className = "",
 }: {
   eyebrow: string;
   title: string;
@@ -660,7 +881,9 @@ function SectionHeader({
   className?: string;
 }) {
   return (
-    <div className={`${centered ? "mx-auto max-w-3xl text-center" : "max-w-3xl"} ${className}`}>
+    <div
+      className={`${centered ? "mx-auto max-w-3xl text-center" : "max-w-3xl"} ${className}`}
+    >
       <p
         className={`font-bold text-[clamp(1rem,1.5vw,1.5rem)] leading-[1.5] ${
           dark ? "text-[oklch(0.72_0.18_142)]" : "text-[var(--green)]"
@@ -685,7 +908,7 @@ function SectionHeader({
 function ThemeToggle({
   theme,
   onToggle,
-  compact = false
+  compact = false,
 }: {
   theme: ThemeMode;
   onToggle: () => void;
@@ -694,9 +917,7 @@ function ThemeToggle({
   return (
     <div className={compact ? "" : "drift-in"}>
       {compact ? null : (
-        <p className="sport-label mb-2 text-[var(--soft)]">
-          After theme
-        </p>
+        <p className="sport-label mb-2 text-[var(--soft)]">After theme</p>
       )}
       <button
         type="button"
@@ -716,11 +937,13 @@ function ThemeToggle({
 function ComparisonBlock({
   item,
   theme,
-  onToggle
+  onToggle,
+  onOpenAfter,
 }: {
   item: (typeof comparisons)[number] & { after: string };
   theme: ThemeMode;
   onToggle: () => void;
+  onOpenAfter: (src: string, alt: string, title: string) => void;
 }) {
   return (
     <article className="comparison-block">
@@ -744,6 +967,7 @@ function ComparisonBlock({
           height={2036}
           positive
           figureClassName="comparison-img"
+          onOpen={() => onOpenAfter(item.after, item.afterAlt, item.title)}
         />
         <ComparisonNotes
           label="After"
@@ -760,7 +984,7 @@ function ComparisonNotes({
   label,
   notes,
   positive = false,
-  className = ""
+  className = "",
 }: {
   label: string;
   notes: string[];
@@ -769,8 +993,11 @@ function ComparisonNotes({
 }) {
   return (
     <div className={`comparison-notes ${className}`}>
-      <p className="display-sport">
-        {label}
+      <p className="display-sport">{label}</p>
+      <p className="mt-2 text-sm leading-6 text-[var(--soft)]">
+        {positive
+          ? "User impact after redesign"
+          : "User friction before redesign"}
       </p>
       <ul>
         {notes.map((note) => (
@@ -794,7 +1021,8 @@ function ComparisonImage({
   width,
   height,
   positive = false,
-  figureClassName = ""
+  figureClassName = "",
+  onOpen,
 }: {
   image: string;
   alt: string;
@@ -802,10 +1030,13 @@ function ComparisonImage({
   height: number;
   positive?: boolean;
   figureClassName?: string;
+  onOpen?: () => void;
 }) {
   return (
-    <figure className={`comparison-frame relative overflow-hidden ${positive ? "comparison-frame--positive" : ""} ${figureClassName}`}>
-      <div className="flex h-[410px] items-center justify-center sm:h-[490px] xl:h-[580px]">
+    <figure
+      className={`comparison-frame relative overflow-hidden ${positive ? "comparison-frame--positive" : ""} ${figureClassName}`}
+    >
+      <div className="flex h-[533px] items-center justify-center sm:h-[637px] xl:h-[754px]">
         <Image
           src={image}
           alt={alt}
@@ -814,6 +1045,15 @@ function ComparisonImage({
           className="h-full w-full object-contain"
         />
       </div>
+      {positive && onOpen ? (
+        <button
+          type="button"
+          onClick={onOpen}
+          className="absolute bottom-3 right-3 rounded-full border border-[var(--line)] bg-[oklch(0.985_0.01_145/.95)] px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.08em] text-[var(--forest)] transition hover:bg-[var(--cream)]"
+        >
+          View larger
+        </button>
+      ) : null}
     </figure>
   );
 }
@@ -821,5 +1061,3 @@ function ComparisonImage({
 function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max);
 }
-
-
