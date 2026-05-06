@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Viictor Redesign — Case Study</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500;1,700;1,800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green:       #1E7A34;
+      --green-light: #2A9A45;
+      --green-bg:    #E8F5ED;
+      --ink:         #0D1A10;
+      --graphite:    #526058;
+      --divider:     #DCE5DC;
+      --court-white: #F6F9F6;
+      --surface:     #ECF0EC;
+      --amber:       #B96E00;
+      --amber-bg:    #FEF5E4;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      font-optical-sizing: auto;
+      background: var(--court-white);
+      color: var(--ink);
+      overflow-x: hidden;
+    }
+
+    /* ── Scroll animations ── */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 700ms cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 700ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+    .fade-up.delay-1 { transition-delay: 100ms; }
+    .fade-up.delay-2 { transition-delay: 200ms; }
+    .fade-up.delay-3 { transition-delay: 320ms; }
+    .fade-up.delay-4 { transition-delay: 440ms; }
+
+    /* ── Global type ── */
+    p { max-width: 68ch; line-height: 1.65; }
+    strong { font-weight: 700; }
+
+    /* ════════════════════════════════════
+       HERO
+    ════════════════════════════════════ */
+    .hero {
+      background: var(--ink);
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      justify-content: flex-end;
+      padding: 0 80px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: -200px; right: -200px;
+      width: 700px; height: 700px;
+      background: radial-gradient(circle, rgba(30,122,52,0.18) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    .hero-eyebrow {
+      font-size: 12px; font-weight: 600;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--green-light);
+      margin-bottom: 32px;
+      opacity: 1;
+    }
+
+    .hero-title {
+      font-size: clamp(56px, 8.5vw, 120px);
+      font-weight: 800;
+      line-height: 0.93;
+      letter-spacing: -4px;
+      color: var(--court-white);
+      margin-bottom: 40px;
+    }
+
+    .hero-title em {
+      font-style: italic;
+      color: rgba(246,249,246,0.45);
+    }
+
+    .hero-sub {
+      font-size: 18px; font-weight: 400; line-height: 1.6;
+      color: rgba(246,249,246,0.65);
+      max-width: 560px; margin-bottom: 64px;
+    }
+
+    .hero-scores {
+      display: flex; gap: 2px; flex-wrap: wrap;
+    }
+
+    .score-badge {
+      padding: 16px 24px;
+      background: rgba(246,249,246,0.06);
+      border: 0.5px solid rgba(246,249,246,0.1);
+      display: flex; flex-direction: column; gap: 4px;
+    }
+
+    .score-badge-label {
+      font-size: 10px; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: rgba(246,249,246,0.4);
+    }
+
+    .score-badge-value {
+      font-size: 20px; font-weight: 800; letter-spacing: -0.5px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .score-badge-value .before { color: rgba(246,249,246,0.35); }
+    .score-badge-value .arrow  { color: rgba(246,249,246,0.25); margin: 0 8px; font-weight: 400; }
+    .score-badge-value .after  { color: var(--green-light); }
+
+    /* ════════════════════════════════════
+       META STRIP
+    ════════════════════════════════════ */
+    .meta-strip {
+      background: var(--court-white);
+      border-bottom: 0.5px solid var(--divider);
+      display: flex; flex-wrap: wrap;
+    }
+
+    .meta-item {
+      padding: 28px 40px;
+      border-right: 0.5px solid var(--divider);
+      flex: 1; min-width: 160px;
+    }
+
+    .meta-item:last-child { border-right: none; }
+
+    .meta-label {
+      font-size: 10px; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--graphite); margin-bottom: 6px;
+    }
+
+    .meta-value {
+      font-size: 15px; font-weight: 700; color: var(--ink);
+    }
+
+    /* ════════════════════════════════════
+       SECTION PATTERNS
+    ════════════════════════════════════ */
+    .section-light {
+      background: var(--court-white);
+      padding: 120px 80px;
+    }
+
+    .section-dark {
+      background: var(--ink);
+      padding: 120px 80px;
+    }
+
+    .section-surface {
+      background: var(--surface);
+      padding: 120px 80px;
+    }
+
+    .section-green {
+      background: var(--green);
+      padding: 120px 80px;
+    }
+
+    .section-eyebrow {
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+
+    .on-dark  .section-eyebrow { color: var(--green-light); }
+    .on-light .section-eyebrow { color: var(--green); }
+    .on-green .section-eyebrow { color: rgba(255,255,255,0.65); }
+
+    .section-heading {
+      font-size: clamp(36px, 4.5vw, 64px);
+      font-weight: 800; letter-spacing: -2px; line-height: 1.0;
+      margin-bottom: 32px;
+    }
+
+    .on-dark  .section-heading { color: var(--court-white); }
+    .on-light .section-heading { color: var(--ink); }
+    .on-green .section-heading { color: #fff; }
+
+    .section-body {
+      font-size: 18px; font-weight: 400; line-height: 1.7;
+      color: var(--graphite); max-width: 680px;
+    }
+
+    .on-dark  .section-body { color: rgba(246,249,246,0.6); }
+    .on-green .section-body { color: rgba(255,255,255,0.8); }
+
+    /* ════════════════════════════════════
+       PROBLEM SECTION
+    ════════════════════════════════════ */
+    .score-giant {
+      font-size: clamp(96px, 16vw, 200px);
+      font-weight: 800; line-height: 0.9;
+      letter-spacing: -8px;
+      color: rgba(246,249,246,0.08);
+      font-variant-numeric: tabular-nums;
+      position: absolute;
+      top: 80px; right: 80px;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .score-real {
+      font-size: clamp(48px, 6vw, 80px);
+      font-weight: 800; letter-spacing: -3px;
+      line-height: 1; margin-bottom: 8px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .score-real .denom {
+      font-size: 0.45em; font-weight: 500;
+      color: rgba(246,249,246,0.35);
+      letter-spacing: -1px;
+    }
+
+    .score-real.design { color: #E05A4A; }
+    .score-real.tech   { color: #D4840A; }
+
+    .score-verdict {
+      font-size: 12px; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: rgba(246,249,246,0.4);
+      margin-bottom: 40px;
+    }
+
+    .issue-list {
+      list-style: none;
+      display: flex; flex-direction: column; gap: 0;
+      max-width: 640px;
+    }
+
+    .issue-item {
+      display: flex; align-items: baseline; gap: 16px;
+      padding: 20px 0;
+      border-bottom: 0.5px solid rgba(246,249,246,0.06);
+    }
+
+    .issue-item:last-child { border-bottom: none; }
+
+    .issue-badge {
+      font-size: 10px; font-weight: 800;
+      letter-spacing: 0.08em;
+      padding: 3px 8px; border-radius: 4px;
+      flex-shrink: 0;
+    }
+
+    .p0 { background: rgba(224,90,74,0.2); color: #E05A4A; }
+    .p1 { background: rgba(212,132,10,0.2); color: #D4840A; }
+
+    .issue-text {
+      font-size: 16px; font-weight: 600;
+      color: rgba(246,249,246,0.8);
+      line-height: 1.4;
+    }
+
+    /* ════════════════════════════════════
+       SCENE SENTENCE
+    ════════════════════════════════════ */
+    .scene-quote {
+      font-size: clamp(22px, 3vw, 38px);
+      font-weight: 700; font-style: italic;
+      line-height: 1.35; letter-spacing: -0.5px;
+      color: var(--ink);
+      max-width: 820px;
+      padding: 48px 0;
+      border-top: 2px solid var(--green);
+    }
+
+    .scene-quote-label {
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--green); margin-bottom: 20px;
+    }
+
+    /* ════════════════════════════════════
+       THREE DECISIONS
+    ════════════════════════════════════ */
+    .decisions-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 2px; margin-top: 64px;
+    }
+
+    .decision-card {
+      padding: 40px 36px;
+      background: var(--surface);
+    }
+
+    .decision-num {
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--green); margin-bottom: 20px;
+    }
+
+    .decision-title {
+      font-size: 22px; font-weight: 800;
+      letter-spacing: -0.5px; color: var(--ink);
+      margin-bottom: 14px;
+      line-height: 1.2;
+    }
+
+    .decision-body {
+      font-size: 15px; font-weight: 400;
+      color: var(--graphite); line-height: 1.6;
+      max-width: 100%;
+    }
+
+    .decision-rule {
+      margin-top: 20px;
+      font-size: 12px; font-weight: 700;
+      color: var(--green);
+      padding: 10px 14px;
+      background: var(--green-bg);
+      border-radius: 6px;
+      line-height: 1.4;
+    }
+
+    /* ════════════════════════════════════
+       PHONE MOCKUPS — BEFORE / AFTER
+    ════════════════════════════════════ */
+    .phones-section {
+      background: var(--ink);
+      padding: 120px 80px;
+    }
+
+    .phones-row {
+      display: flex; gap: 40px;
+      align-items: flex-start;
+      margin-top: 64px;
+      justify-content: center;
+    }
+
+    .phone-wrap {
+      display: flex; flex-direction: column;
+      align-items: center; gap: 20px;
+    }
+
+    .phone-tag {
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+    }
+
+    .phone-tag.before { color: rgba(246,249,246,0.3); }
+    .phone-tag.after  { color: var(--green-light); }
+
+    /* Phone frame */
+    .phone-frame {
+      width: 260px; height: 540px;
+      border-radius: 36px; overflow: hidden;
+      position: relative;
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.08),
+        0 0 0 7px #1C211C,
+        0 0 0 8px rgba(255,255,255,0.04),
+        0 32px 64px rgba(0,0,0,0.6);
+      display: flex; flex-direction: column;
+    }
+
+    .phone-frame .di {
+      position: absolute; top: 8px; left: 50%;
+      transform: translateX(-50%);
+      width: 84px; height: 24px;
+      border-radius: 14px; z-index: 10;
+    }
+
+    /* OLD APP styles */
+    .phone-old { background: #111; }
+    .phone-old .di { background: #040604; }
+
+    .phone-old .status { height: 40px; background: #111; display: flex; align-items: flex-end; justify-content: space-between; padding: 0 20px 6px; }
+    .phone-old .status-t { font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.8); }
+    .phone-old .status-ic { font-size: 9px; color: rgba(255,255,255,0.5); }
+
+    .phone-old .header-bar { height: 44px; background: #000; display: flex; align-items: center; justify-content: center; }
+    .phone-old .header-bar span { font-size: 11px; font-weight: 800; color: rgba(255,255,255,0.85); letter-spacing: 0.12em; text-transform: uppercase; }
+
+    .phone-old .content { flex: 1; background: #141414; padding: 20px 16px; }
+
+    .phone-old .stat-section { margin-bottom: 24px; padding: 16px; background: #1A1A1A; border-radius: 8px; }
+    .phone-old .stat-label-o { font-size: 8px; font-weight: 600; color: rgba(255,255,255,0.35); letter-spacing: 0.1em; text-transform: uppercase; text-align: center; margin-bottom: 14px; }
+    .phone-old .stat-row { display: flex; justify-content: space-around; }
+    .phone-old .stat-o { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+    .phone-old .stat-v { font-size: 15px; font-weight: 700; color: rgba(255,255,255,0.75); }
+    .phone-old .stat-l { font-size: 8px; color: rgba(255,255,255,0.3); letter-spacing: 0.08em; text-transform: uppercase; }
+
+    .phone-old .blank { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; opacity: 0.18; }
+    .phone-old .blank-bar { height: 2px; background: rgba(255,255,255,0.3); border-radius: 1px; }
+
+    .phone-old .footer-bar { height: 36px; background: #0C0C0C; }
+
+    /* NEW APP styles */
+    .phone-new { background: #F6F9F6; }
+    .phone-new .di { background: #0D1A10; }
+
+    .phone-new .status { height: 40px; background: #F6F9F6; display: flex; align-items: flex-end; justify-content: space-between; padding: 0 20px 6px; }
+    .phone-new .status-t { font-size: 10px; font-weight: 700; color: #0D1A10; }
+    .phone-new .status-ic { font-size: 9px; color: #526058; }
+
+    .phone-new .app-hdr { height: 52px; background: #F6F9F6; border-bottom: 0.5px solid #DCE5DC; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; }
+    .phone-new .app-logo { display: flex; align-items: center; gap: 6px; }
+    .phone-new .app-logo-icon { width: 20px; height: 20px; background: #1E7A34; border-radius: 6px; display: flex; align-items: center; justify-content: center; }
+    .phone-new .app-logo-text { font-size: 12px; font-weight: 800; color: #0D1A10; letter-spacing: 0.04em; }
+    .phone-new .bell-icon { width: 28px; height: 28px; border-radius: 14px; background: #ECF0EC; border: 0.5px solid #DCE5DC; display: flex; align-items: center; justify-content: center; position: relative; }
+    .phone-new .bell-dot { position: absolute; top: 5px; right: 5px; width: 6px; height: 6px; background: #1E7A34; border-radius: 3px; border: 1px solid #F6F9F6; }
+
+    .phone-new .content-n { flex: 1; background: #F6F9F6; padding: 16px 14px 0; overflow: hidden; }
+
+    .phone-new .player-n { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+    .phone-new .avatar-n { width: 44px; height: 44px; border-radius: 22px; background: #1E7A34; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; color: #fff; border: 1.5px solid rgba(255,255,255,0.8); }
+    .phone-new .pname-n { font-size: 15px; font-weight: 800; color: #0D1A10; letter-spacing: -0.3px; }
+    .phone-new .ploc-n { font-size: 10px; color: #526058; display: flex; align-items: center; gap: 3px; margin-top: 2px; }
+
+    .phone-new .stats-pills { display: flex; gap: 6px; margin-bottom: 16px; }
+    .phone-new .sp { padding: 4px 8px; border-radius: 999px; background: #ECF0EC; border: 0.5px solid #DCE5DC; font-size: 10px; font-weight: 700; color: #0D1A10; }
+    .phone-new .tier-sp { padding: 4px 8px; border-radius: 999px; background: #FEF5E4; border: 0.5px solid rgba(185,110,0,0.1); font-size: 9px; font-weight: 700; color: #B96E00; letter-spacing: 0.05em; text-transform: uppercase; }
+
+    .phone-new .cta-pair { display: flex; gap: 8px; margin-bottom: 10px; }
+    .phone-new .cta-n { flex: 1; border-radius: 12px; padding: 12px 10px; }
+    .phone-new .cta-n.green-n { background: #1E7A34; }
+    .phone-new .cta-n.amber-n { background: #E8970A; }
+    .phone-new .cta-nt { font-size: 11px; font-weight: 800; letter-spacing: -0.2px; line-height: 1.1; text-transform: uppercase; }
+    .phone-new .cta-n.green-n .cta-nt { color: #fff; }
+    .phone-new .cta-n.amber-n .cta-nt { color: #1A1000; }
+    .phone-new .cta-nb { font-size: 8px; color: rgba(255,255,255,0.75); margin-top: 6px; line-height: 1.3; }
+    .phone-new .cta-n.amber-n .cta-nb { color: rgba(26,16,0,0.65); }
+
+    .phone-new .result-row-n { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 0.5px solid #DCE5DC; }
+    .phone-new .rav-n { width: 26px; height: 26px; border-radius: 13px; background: #ECF0EC; border: 0.5px solid #DCE5DC; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 700; color: #526058; flex-shrink: 0; }
+    .phone-new .rinfo-n { flex: 1; }
+    .phone-new .rname-n { font-size: 10px; font-weight: 600; color: #0D1A10; }
+    .phone-new .rdetail-n { font-size: 8px; color: #526058; }
+    .phone-new .rbadge-n { width: 20px; height: 20px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 800; }
+    .phone-new .win-n { background: #E8F5ED; color: #1E7A34; }
+    .phone-new .loss-n { background: #FDECEA; color: #C0392B; }
+
+    .phone-new .tab-bar-n { height: 54px; background: #fff; border-top: 0.5px solid #DCE5DC; display: flex; align-items: flex-start; padding-top: 6px; }
+    .phone-new .tab-n { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+    .phone-new .tab-n .ti { width: 16px; height: 16px; }
+    .phone-new .tab-n .tl { font-size: 7px; font-weight: 500; color: #526058; }
+    .phone-new .tab-n.act-n .tl { color: #1E7A34; font-weight: 700; }
+
+    /* ════════════════════════════════════
+       SCORE SECTION (GREEN)
+    ════════════════════════════════════ */
+    .score-section {
+      background: var(--green);
+      padding: 120px 80px;
+    }
+
+    .score-compare-grid {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 40px; align-items: center;
+      margin-top: 64px; max-width: 800px;
+    }
+
+    .score-block { display: flex; flex-direction: column; gap: 8px; }
+
+    .score-period {
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: rgba(255,255,255,0.55);
+    }
+
+    .score-num {
+      font-size: clamp(72px, 10vw, 120px);
+      font-weight: 800; letter-spacing: -4px; line-height: 0.9;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .score-num.before-score { color: rgba(255,255,255,0.25); }
+    .score-num.after-score  { color: #fff; }
+
+    .score-denom {
+      font-size: 0.35em; font-weight: 500;
+      letter-spacing: -1px; opacity: 0.7;
+    }
+
+    .score-type {
+      font-size: 14px; font-weight: 600;
+      color: rgba(255,255,255,0.65);
+    }
+
+    .score-arrow {
+      font-size: 40px; color: rgba(255,255,255,0.3);
+      align-self: center;
+    }
+
+    .score-delta {
+      display: inline-flex; align-items: center; gap: 6px;
+      margin-top: 8px; padding: 6px 12px;
+      background: rgba(255,255,255,0.15); border-radius: 20px;
+      font-size: 14px; font-weight: 800;
+      color: rgba(255,255,255,0.9); width: fit-content;
+    }
+
+    .score-breakdown {
+      margin-top: 80px;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 2px; max-width: 800px;
+    }
+
+    .breakdown-item {
+      padding: 28px 32px;
+      background: rgba(255,255,255,0.1);
+    }
+
+    .breakdown-heuristic {
+      font-size: 12px; font-weight: 600;
+      color: rgba(255,255,255,0.55);
+      margin-bottom: 12px; line-height: 1.3;
+    }
+
+    .breakdown-scores {
+      display: flex; align-items: center; gap: 8px;
+    }
+
+    .bs-before {
+      font-size: 20px; font-weight: 800;
+      color: rgba(255,255,255,0.25);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .bs-arrow {
+      color: rgba(255,255,255,0.3); font-size: 14px;
+    }
+
+    .bs-after {
+      font-size: 24px; font-weight: 800;
+      color: #fff; font-variant-numeric: tabular-nums;
+    }
+
+    .bs-change {
+      font-size: 11px; font-weight: 700;
+      color: rgba(255,255,255,0.5);
+    }
+
+    /* Progress bar */
+    .score-bar-wrap {
+      margin-top: 80px; max-width: 800px;
+    }
+
+    .score-bar-label {
+      display: flex; justify-content: space-between;
+      margin-bottom: 10px;
+      font-size: 12px; font-weight: 600;
+      color: rgba(255,255,255,0.55);
+    }
+
+    .score-bar-track {
+      height: 8px; background: rgba(255,255,255,0.15);
+      border-radius: 4px; position: relative; overflow: hidden;
+    }
+
+    .score-bar-fill {
+      height: 100%; border-radius: 4px;
+      background: rgba(255,255,255,0.8);
+      transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+      width: 0;
+    }
+
+    .score-bar-fill.visible-bar { width: var(--target-width); }
+
+    /* ════════════════════════════════════
+       PULL QUOTE
+    ════════════════════════════════════ */
+    .pull-quote {
+      font-size: clamp(20px, 2.5vw, 32px);
+      font-weight: 700; font-style: italic;
+      line-height: 1.4; letter-spacing: -0.3px;
+      padding: 48px 0 0;
+      border-top: 2px solid rgba(246,249,246,0.12);
+      max-width: 680px;
+    }
+
+    .on-dark  .pull-quote { color: rgba(246,249,246,0.7); }
+    .on-light .pull-quote { color: var(--ink); }
+
+    /* ════════════════════════════════════
+       OPEN QUESTIONS
+    ════════════════════════════════════ */
+    .questions-grid {
+      display: grid; grid-template-columns: 1fr 1fr 1fr;
+      gap: 2px; margin-top: 48px;
+    }
+
+    .question-card {
+      padding: 36px 32px;
+      background: var(--surface);
+    }
+
+    .q-num {
+      font-size: 32px; font-weight: 800;
+      color: rgba(13,26,16,0.06); letter-spacing: -1px;
+      margin-bottom: 16px; line-height: 1;
+    }
+
+    .q-text {
+      font-size: 16px; font-weight: 600;
+      color: var(--ink); line-height: 1.45;
+      letter-spacing: -0.2px; margin-bottom: 12px;
+    }
+
+    .q-why {
+      font-size: 13px; font-weight: 400;
+      color: var(--graphite); line-height: 1.5;
+    }
+
+    /* ════════════════════════════════════
+       WHAT'S NEXT
+    ════════════════════════════════════ */
+    .next-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 2px; margin-top: 64px;
+    }
+
+    .next-block {
+      padding: 40px;
+      background: rgba(246,249,246,0.04);
+      border: 0.5px solid rgba(246,249,246,0.08);
+    }
+
+    .next-label {
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--green-light); margin-bottom: 16px;
+    }
+
+    .next-heading {
+      font-size: 20px; font-weight: 800;
+      color: var(--court-white);
+      letter-spacing: -0.5px; margin-bottom: 12px;
+    }
+
+    .next-body {
+      font-size: 14px; font-weight: 400;
+      color: rgba(246,249,246,0.55); line-height: 1.6;
+    }
+
+    .metrics-list {
+      list-style: none; margin-top: 20px;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+
+    .metrics-list li {
+      font-size: 14px; color: rgba(246,249,246,0.6);
+      line-height: 1.4; display: flex; gap: 10px;
+    }
+
+    .metrics-list li::before {
+      content: '→'; color: var(--green-light);
+      flex-shrink: 0; font-weight: 600;
+    }
+
+    /* ════════════════════════════════════
+       FOOTER
+    ════════════════════════════════════ */
+    .case-footer {
+      background: #070E08;
+      padding: 64px 80px;
+      display: flex; justify-content: space-between;
+      align-items: flex-end; flex-wrap: wrap; gap: 24px;
+    }
+
+    .footer-brand-big {
+      font-size: clamp(32px, 5vw, 64px);
+      font-weight: 800; letter-spacing: -2px;
+      color: rgba(246,249,246,0.08);
+      line-height: 1;
+    }
+
+    .footer-links {
+      display: flex; gap: 24px; flex-wrap: wrap;
+    }
+
+    .footer-link {
+      font-size: 13px; font-weight: 600;
+      color: rgba(246,249,246,0.4);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(246,249,246,0.15);
+      padding-bottom: 2px;
+      transition: color 150ms ease, border-color 150ms ease;
+    }
+
+    .footer-link:hover {
+      color: var(--green-light);
+      border-color: var(--green-light);
+    }
+
+    /* ════════════════════════════════════
+       RESPONSIVE
+    ════════════════════════════════════ */
+    @media (max-width: 900px) {
+      .hero, .section-light, .section-dark, .section-surface,
+      .section-green, .phones-section, .score-section, .case-footer {
+        padding-left: 32px; padding-right: 32px;
+      }
+      .decisions-grid { grid-template-columns: 1fr; }
+      .phones-row { flex-direction: column; align-items: center; }
+      .score-compare-grid { grid-template-columns: 1fr; }
+      .score-arrow { display: none; }
+      .next-grid { grid-template-columns: 1fr; }
+      .questions-grid { grid-template-columns: 1fr; }
+      .meta-item { min-width: 50%; }
+      .hero { padding: 40px 32px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ══════════════ HERO ══════════════ -->
+  <section class="hero on-dark">
+    <div class="hero-eyebrow fade-up">Case Study — Viictor Mobile App Redesign</div>
+    <h1 class="hero-title fade-up delay-1">
+      Right product.<br><em>Wrong face.</em>
+    </h1>
+    <p class="hero-sub fade-up delay-2">
+      A ground-up visual redesign that rebuilt Viictor's identity around a light surface, restrained color, and a premium product register — without touching a single core feature.
+    </p>
+    <div class="hero-scores fade-up delay-3">
+      <div class="score-badge">
+        <div class="score-badge-label">Design Health</div>
+        <div class="score-badge-value">
+          <span class="before">10/40</span>
+          <span class="arrow">→</span>
+          <span class="after">29/40</span>
+        </div>
+      </div>
+      <div class="score-badge">
+        <div class="score-badge-label">Technical Audit</div>
+        <div class="score-badge-value">
+          <span class="before">3/20</span>
+          <span class="arrow">→</span>
+          <span class="after">16/20</span>
+        </div>
+      </div>
+      <div class="score-badge">
+        <div class="score-badge-label">Combined (out of 60)</div>
+        <div class="score-badge-value">
+          <span class="before">13/60</span>
+          <span class="arrow">→</span>
+          <span class="after">45/60</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════ META ══════════════ -->
+  <div class="meta-strip">
+    <div class="meta-item fade-up">
+      <div class="meta-label">Platform</div>
+      <div class="meta-value">iOS + Android Mobile App</div>
+    </div>
+    <div class="meta-item fade-up delay-1">
+      <div class="meta-label">Screens in scope</div>
+      <div class="meta-value">15 (2 delivered)</div>
+    </div>
+    <div class="meta-item fade-up delay-2">
+      <div class="meta-label">System delivered</div>
+      <div class="meta-value">Phase 0 through Phase 6</div>
+    </div>
+    <div class="meta-item fade-up delay-3">
+      <div class="meta-label">Output</div>
+      <div class="meta-value">Design system · Screens · Brand toolkit</div>
+    </div>
+  </div>
+
+  <!-- ══════════════ OVERVIEW ══════════════ -->
+  <section class="section-light on-light">
+    <div class="section-eyebrow fade-up">Overview</div>
+    <h2 class="section-heading fade-up delay-1">The platform was right.<br>The design wasn't.</h2>
+    <p class="section-body fade-up delay-2">
+      Viictor is a competitive tennis platform where amateur players enter level-based tournaments, issue Head 2 Head challenges, track their ranking, and win prize money. The mobile app had the right data model and the wrong face: a dark-background neon-green aesthetic that looked like every other amateur sports app, a visual system that contradicted itself screen to screen, and three primary navigation destinations that showed blank white space when empty.
+    </p>
+  </section>
+
+  <!-- ══════════════ THE PROBLEM ══════════════ -->
+  <section class="section-dark on-dark" style="position: relative; overflow: hidden;">
+    <div class="score-giant" aria-hidden="true">10</div>
+
+    <div class="section-eyebrow fade-up">The Problem</div>
+
+    <div style="display: flex; gap: 80px; flex-wrap: wrap; align-items: flex-start; margin-top: 24px;">
+      <div>
+        <div class="score-real design fade-up delay-1">10<span class="denom">/40</span></div>
+        <div class="score-verdict fade-up delay-2">Design Health — Critical</div>
+        <div class="score-real tech fade-up delay-2" style="margin-top: 24px;">3<span class="denom">/20</span></div>
+        <div class="score-verdict fade-up delay-3">Technical Audit — Critical</div>
+      </div>
+
+      <div>
+        <p class="section-body fade-up delay-1" style="margin-bottom: 32px;">
+          The app was built without a design system. A developer working screen by screen produced a product where some screens had black header bars with white text, others had white headers with dark text, and forms used whichever style happened to be applied first. The effect was jarring — the app felt like two different products stitched together.
+        </p>
+
+        <ul class="issue-list">
+          <li class="issue-item fade-up delay-2">
+            <span class="issue-badge p0">P0</span>
+            <span class="issue-text">Three primary nav screens blank — no empty states</span>
+          </li>
+          <li class="issue-item fade-up delay-2">
+            <span class="issue-badge p0">P0</span>
+            <span class="issue-text">Dashboard has no primary action — zero forward momentum</span>
+          </li>
+          <li class="issue-item fade-up delay-3">
+            <span class="issue-badge p1">P1</span>
+            <span class="issue-text">Header inconsistency across all screens — catastrophic split</span>
+          </li>
+          <li class="issue-item fade-up delay-3">
+            <span class="issue-badge p1">P1</span>
+            <span class="issue-text">Players list shows names only — useless as a matchmaking tool</span>
+          </li>
+          <li class="issue-item fade-up delay-4">
+            <span class="issue-badge p1">P1</span>
+            <span class="issue-text">Leaderboard treats rank 1 and rank 5 identically — emotionally inert</span>
+          </li>
+        </ul>
+
+        <div class="pull-quote fade-up" style="margin-top: 48px;">
+          "6 of 8 cognitive load checklist items failed. The app consistently required users to hold information in working memory that the UI should have been providing."
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════ USERS ══════════════ -->
+  <section class="section-light on-light">
+    <div class="section-eyebrow fade-up">Who Uses This</div>
+    <div class="scene-quote-label fade-up delay-1">The forcing question</div>
+    <blockquote class="scene-quote fade-up delay-2">
+      "A 35-year-old weekend player in Perth stands on a suburban outdoor court at 2:30pm, racquet in one hand, phone in the other, checking if their match invite from last night was accepted — bright Australian sun overhead, slight adrenaline, one-handed, impatient."
+    </blockquote>
+    <p class="section-body fade-up delay-3" style="margin-top: 40px;">
+      This sentence forced a light theme. Outdoor, bright sun, maximum legibility. It forced thumb-zone anchored actions — one-handed, racquet in the other hand. The old dark interface was the exact wrong answer for this scene. Every major design decision in the redesign traces back to this single sentence.
+    </p>
+  </section>
+
+  <!-- ══════════════ THREE DECISIONS ══════════════ -->
+  <section class="section-surface on-light">
+    <div class="section-eyebrow fade-up">Design Direction</div>
+    <h2 class="section-heading fade-up delay-1">Three decisions.<br>Everything else followed.</h2>
+
+    <div class="decisions-grid">
+      <div class="decision-card fade-up delay-1">
+        <div class="decision-num">Decision 01 — Colour</div>
+        <div class="decision-title">Restrained: green ≤10% of any screen</div>
+        <div class="decision-body">The current app used green as wallpaper — neon on dark, everywhere, at all times. The redesign treats green as a precision instrument. When it appears, it means something. A pending challenge, an active state, a earned moment. The moment it covers more than 10% of a screen, it becomes the template we escaped.</div>
+        <div class="decision-rule">The Rarity Rule: scarcity is the signal.</div>
+      </div>
+      <div class="decision-card fade-up delay-2">
+        <div class="decision-num">Decision 02 — Theme</div>
+        <div class="decision-title">Light surfaces throughout</div>
+        <div class="decision-body">The scene sentence made this inevitable — outdoor, bright Australian sun, maximum legibility. The three anchor references (Strava, Nike Run Club, Apple Fitness+) all use light primary surfaces. The dark treatment was the category reflex, not a considered decision. Breaking from it was the biggest single visual statement of the rebrand.</div>
+        <div class="decision-rule">Reference apps: Strava · Nike Run Club · Apple Fitness+</div>
+      </div>
+      <div class="decision-card fade-up delay-3">
+        <div class="decision-num">Decision 03 — Navigation</div>
+        <div class="decision-title">Side drawer → bottom tab bar</div>
+        <div class="decision-body">The hamburger menu in the top-left corner is the hardest tap target on a modern phone. It hides navigation behind an extra tap. It left the thumb zone — the bottom 40% of the screen — entirely empty on every single screen. Replacing it with a persistent bottom tab bar (Home · Play · Players · Rank · Me) fixed two P1 audit findings simultaneously.</div>
+        <div class="decision-rule">Thumb zone rule: primary actions at the bottom, always.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════ BEFORE / AFTER PHONES ══════════════ -->
+  <section class="phones-section on-dark">
+    <div class="section-eyebrow fade-up">Before + After</div>
+    <h2 class="section-heading fade-up delay-1">The same platform.<br>A different conversation.</h2>
+
+    <div class="phones-row">
+
+      <!-- BEFORE phone -->
+      <div class="phone-wrap fade-up delay-1">
+        <div class="phone-tag before">Before</div>
+        <div class="phone-frame phone-old">
+          <div class="di" aria-hidden="true"></div>
+          <div class="status">
+            <span class="status-t">2:34</span>
+            <span class="status-ic">● ▲ ▬</span>
+          </div>
+          <div class="header-bar">
+            <span>MY STATISTICS</span>
+          </div>
+          <div class="content">
+            <div class="stat-section">
+              <div class="stat-label-o">Player Stats</div>
+              <div class="stat-row">
+                <div class="stat-o">
+                  <span class="stat-v" style="color:#00cc00;">$0.0</span>
+                  <span class="stat-l">Earnings</span>
+                </div>
+                <div class="stat-o">
+                  <span class="stat-v">200.0</span>
+                  <span class="stat-l">Points</span>
+                </div>
+                <div class="stat-o">
+                  <span class="stat-v">#367</span>
+                  <span class="stat-l">Ranking</span>
+                </div>
+              </div>
+            </div>
+            <!-- Blank space -->
+            <div class="blank">
+              <div class="blank-bar" style="width:80%;"></div>
+              <div class="blank-bar" style="width:60%;"></div>
+              <div class="blank-bar" style="width:70%;"></div>
+              <div style="height:40px;"></div>
+              <div class="blank-bar" style="width:50%;"></div>
+              <div class="blank-bar" style="width:65%;"></div>
+            </div>
+            <div class="footer-bar"></div>
+          </div>
+        </div>
+        <div style="max-width:260px;text-align:center;">
+          <p style="font-size:12px;color:rgba(246,249,246,0.35);line-height:1.5;">Dark background, neon green, equal-weight stats, no CTA, no primary action. A competitive athlete has nowhere to go from this screen.</p>
+        </div>
+      </div>
+
+      <!-- AFTER phone -->
+      <div class="phone-wrap fade-up delay-2">
+        <div class="phone-tag after">After</div>
+        <div class="phone-frame phone-new">
+          <div class="di" aria-hidden="true"></div>
+          <div class="status">
+            <span class="status-t">2:34</span>
+            <span class="status-ic">▲ ◌ ▬</span>
+          </div>
+          <div class="app-hdr">
+            <div class="app-logo">
+              <div class="app-logo-icon">
+                <svg width="11" height="9" viewBox="0 0 18 14" fill="none"><path d="M1 1l6 12L9 9l2 4 6-12" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <span class="app-logo-text">VIICTOR</span>
+            </div>
+            <div class="bell-icon">
+              <svg width="11" height="12" viewBox="0 0 20 21" fill="none" stroke="#526058" stroke-width="1.8" stroke-linecap="round"><path d="M10 2.5a6 6 0 00-6 6V11L2.5 14.5h15L16 11V8.5a6 6 0 00-6-6z"/></svg>
+              <div class="bell-dot"></div>
+            </div>
+          </div>
+          <div class="content-n">
+            <div class="player-n">
+              <div class="avatar-n">AN</div>
+              <div>
+                <div class="pname-n">Andrei Nicolas</div>
+                <div class="ploc-n">
+                  <svg width="8" height="9" viewBox="0 0 12 13" fill="none"><path d="M6 1.5A3.5 3.5 0 019.5 5c0 2.5-3.5 6.5-3.5 6.5S2.5 7.5 2.5 5A3.5 3.5 0 016 1.5z" fill="#1E7A34"/></svg>
+                  Perth, WA
+                </div>
+              </div>
+            </div>
+            <div class="stats-pills">
+              <div class="sp">★ 1,928</div>
+              <div class="sp">↑ #367</div>
+              <div class="tier-sp">Tier 4</div>
+            </div>
+            <div class="cta-pair">
+              <div class="cta-n green-n">
+                <div class="cta-nt">Head 2<br>Head</div>
+                <div class="cta-nb">Challenge a player at your level</div>
+              </div>
+              <div class="cta-n amber-n">
+                <div class="cta-nt">Tourna-<br>ments</div>
+                <div class="cta-nb">Browse open events near you</div>
+              </div>
+            </div>
+            <!-- Results -->
+            <div class="result-row-n">
+              <div class="rav-n">TG</div>
+              <div class="rinfo-n">
+                <div class="rname-n">Tim Gray</div>
+                <div class="rdetail-n">Box Match 48 · 3 days ago</div>
+              </div>
+              <div class="rbadge-n win-n">W</div>
+            </div>
+            <div class="result-row-n">
+              <div class="rav-n">SW</div>
+              <div class="rinfo-n">
+                <div class="rname-n">Scott Webster</div>
+                <div class="rdetail-n">Monthly Knockout · 5 days ago</div>
+              </div>
+              <div class="rbadge-n loss-n">L</div>
+            </div>
+          </div>
+          <div class="tab-bar-n">
+            <div class="tab-n act-n">
+              <svg class="ti" viewBox="0 0 22 22" fill="#1E7A34"><path d="M2.5 9.8L11 3.3l8.5 6.5V20a.9.9 0 01-.9.9h-4.7v-5.6H8.1V21H3.4A.9.9 0 012.5 20V9.8z"/></svg>
+              <span class="tl" style="color:#1E7A34;">Home</span>
+            </div>
+            <div class="tab-n">
+              <svg class="ti" viewBox="0 0 22 22" fill="none" stroke="#526058" stroke-width="1.75" stroke-linecap="round"><circle cx="11" cy="11" r="8.5"/><path d="M2.5 8C5 9 8 9.5 11 9.5s6-.5 8.5-1.5"/><line x1="11" y1="2.5" x2="11" y2="19.5"/></svg>
+              <span class="tl">Play</span>
+            </div>
+            <div class="tab-n">
+              <svg class="ti" viewBox="0 0 22 22" fill="none" stroke="#526058" stroke-width="1.75" stroke-linecap="round"><circle cx="8.5" cy="7.5" r="3.2"/><path d="M1.5 19c0-3.59 3.13-6.5 7-6.5s7 2.91 7 6.5"/></svg>
+              <span class="tl">Players</span>
+            </div>
+            <div class="tab-n">
+              <svg class="ti" viewBox="0 0 22 22" fill="none" stroke="#526058" stroke-width="1.75" stroke-linecap="round"><rect x="2" y="12" width="5" height="8.5" rx="1.5"/><rect x="8.5" y="7" width="5" height="13.5" rx="1.5"/><rect x="15" y="2.5" width="5" height="18" rx="1.5"/></svg>
+              <span class="tl">Rank</span>
+            </div>
+            <div class="tab-n">
+              <svg class="ti" viewBox="0 0 22 22" fill="none" stroke="#526058" stroke-width="1.75" stroke-linecap="round"><circle cx="11" cy="8" r="3.5"/><path d="M3.5 19.5c0-4.14 3.36-7.5 7.5-7.5s7.5 3.36 7.5 7.5"/></svg>
+              <span class="tl">Me</span>
+            </div>
+          </div>
+        </div>
+        <div style="max-width:260px;text-align:center;">
+          <p style="font-size:12px;color:rgba(246,249,246,0.55);line-height:1.5;">Light surface, compact identity, two large CTAs (Head 2 Head / Tournaments), recent results below. Thumb zone has the tab bar. The green appears in exactly four places.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════ THE SCORE ══════════════ -->
+  <section class="score-section on-green">
+    <div class="section-eyebrow fade-up" style="color:rgba(255,255,255,0.6);">The Result</div>
+    <h2 class="section-heading fade-up delay-1" style="color:#fff;">+32 points.<br>Same product.</h2>
+
+    <div class="score-compare-grid fade-up delay-2">
+      <div class="score-block">
+        <div class="score-period">Before</div>
+        <div class="score-num before-score">13<span class="score-denom">/60</span></div>
+        <div class="score-type">Combined across both audits</div>
+      </div>
+      <div class="score-arrow fade-up delay-3">→</div>
+      <div class="score-block">
+        <div class="score-period">After</div>
+        <div class="score-num after-score">45<span class="score-denom">/60</span></div>
+        <div class="score-type">Combined across both audits</div>
+        <div class="score-delta fade-up delay-4">
+          <span>↑ +32</span>
+          <span style="font-weight:500;opacity:0.7;">improvement</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Progress bars -->
+    <div class="score-bar-wrap fade-up delay-2" style="margin-top:64px;">
+      <div class="score-bar-label">
+        <span>Design Health (Nielsen's 10 heuristics)</span>
+        <span>10/40 → 29/40</span>
+      </div>
+      <div class="score-bar-track" style="margin-bottom:20px;">
+        <div class="score-bar-fill" style="--target-width: 72.5%; background: rgba(255,255,255,0.5);"></div>
+      </div>
+      <div style="height:4px; background: rgba(255,255,255,0.12); border-radius:2px; margin-bottom:24px; position:relative;">
+        <div style="position:absolute; left:25%; top:0; bottom:0; background:rgba(255,255,255,0.25); border-radius:2px; transition: width 1s ease; width:0;" class="score-bar-fill" data-target="25"></div>
+      </div>
+
+      <div class="score-bar-label" style="margin-top:8px;">
+        <span>Technical Audit (accessibility, theming, anti-patterns)</span>
+        <span>3/20 → 16/20</span>
+      </div>
+      <div class="score-bar-track">
+        <div class="score-bar-fill" style="--target-width: 80%; background: rgba(255,255,255,0.7);"></div>
+      </div>
+    </div>
+
+    <!-- Breakdown -->
+    <div class="score-breakdown fade-up delay-3">
+      <div class="breakdown-item">
+        <div class="breakdown-heuristic">Aesthetic and Minimalist Design</div>
+        <div class="breakdown-scores">
+          <span class="bs-before">1</span>
+          <span class="bs-arrow">→</span>
+          <span class="bs-after">4</span>
+          <span class="bs-change">+3 — largest single heuristic gain</span>
+        </div>
+      </div>
+      <div class="breakdown-item">
+        <div class="breakdown-heuristic">Consistency and Standards</div>
+        <div class="breakdown-scores">
+          <span class="bs-before">1</span>
+          <span class="bs-arrow">→</span>
+          <span class="bs-after">4</span>
+          <span class="bs-change">+3 — one system, no split</span>
+        </div>
+      </div>
+      <div class="breakdown-item">
+        <div class="breakdown-heuristic">Theming (Audit)</div>
+        <div class="breakdown-scores">
+          <span class="bs-before">0</span>
+          <span class="bs-arrow">→</span>
+          <span class="bs-after">4</span>
+          <span class="bs-change">+4 — CSS variable system from scratch</span>
+        </div>
+      </div>
+      <div class="breakdown-item">
+        <div class="breakdown-heuristic">Anti-Patterns (Audit)</div>
+        <div class="breakdown-scores">
+          <span class="bs-before">1</span>
+          <span class="bs-arrow">→</span>
+          <span class="bs-after">4</span>
+          <span class="bs-change">+3 — zero absolute bans violated</span>
+        </div>
+      </div>
+    </div>
+
+    <p class="section-body fade-up delay-4" style="margin-top:48px;">
+      The +3 on Aesthetic and Minimalist Design was driven entirely by the light system and the restrained green strategy. The +4 on Theming was driven by establishing the CSS custom property system before writing any screen code. Both improvements were structural, not cosmetic.
+    </p>
+  </section>
+
+  <!-- ══════════════ OPEN QUESTIONS ══════════════ -->
+  <section class="section-light on-light">
+    <div class="section-eyebrow fade-up">Honest Uncertainty</div>
+    <h2 class="section-heading fade-up delay-1">What we'd test with real players.</h2>
+    <p class="section-body fade-up delay-2">These aren't gaps in the design — they're decisions that can only be validated by watching actual players use the app. The design system makes it easy to adjust any of them without rebuilding from scratch.</p>
+
+    <div class="questions-grid">
+      <div class="question-card fade-up delay-1">
+        <div class="q-num">01</div>
+        <div class="q-text">Does the large green ranking number feel motivating or discouraging for lower-ranked players?</div>
+        <div class="q-why">The ranking hero is the emotional core of the dashboard. If #912 makes a player feel defeated rather than driven, we need a different treatment for that emotional state.</div>
+      </div>
+      <div class="question-card fade-up delay-2">
+        <div class="q-num">02</div>
+        <div class="q-text">Do players find the "What's next" card sufficient, or do they want a full activity feed?</div>
+        <div class="q-why">Surfacing the single most urgent action (pending challenge, closing tournament) was a deliberate simplification. It may be too sparse for active players with multiple things pending simultaneously.</div>
+      </div>
+      <div class="question-card fade-up delay-3">
+        <div class="q-num">03</div>
+        <div class="q-text">Does "Head 2 Head / Tournaments" match players' mental model, or does the tab grouping cause confusion?</div>
+        <div class="q-why">The five-tab bar (Home · Play · Players · Rank · Me) grouped competition-related features under "Play." Whether players naturally think in those categories is an assumption that needs validation.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════ WHAT'S NEXT ══════════════ -->
+  <section class="section-dark on-dark">
+    <div class="section-eyebrow fade-up">What's Next</div>
+    <h2 class="section-heading fade-up delay-1">13 screens remaining.<br>The system is ready for them.</h2>
+    <p class="section-body fade-up delay-2">The redesign established a complete design system (DESIGN.md, PRODUCT.md, brand toolkit) before building a single screen. Each remaining screen inherits the tokens, rules, and patterns already defined — they're not starting from scratch.</p>
+
+    <div class="next-grid fade-up delay-2">
+      <div class="next-block">
+        <div class="next-label">Priority — build next</div>
+        <div class="next-heading">The Leaderboard</div>
+        <div class="next-body">The emotional core of the platform. The screen that answers: "where do I stand against everyone else?" It needs top-3 distinct treatment, a user's own row pinned and highlighted, and a gap-to-next-rank delta that turns a sorted list into a competitive motivator. This is the screen where the dark "earned treatment" exception most clearly belongs.</div>
+      </div>
+      <div class="next-block">
+        <div class="next-label">Success metrics</div>
+        <div class="next-heading">How we'd know it worked</div>
+        <ul class="metrics-list">
+          <li>Daily active sessions increase (players returning to check challenges)</li>
+          <li>Tournament entry conversion rate from app (currently unmeasured)</li>
+          <li>Time-to-first-tournament for new users</li>
+          <li>Challenge acceptance rate after surfacing on dashboard</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="pull-quote fade-up" style="margin-top: 64px;">
+      "The biggest opportunity is not a feature. It is finishing what already exists."
+    </div>
+  </section>
+
+  <!-- ══════════════ FOOTER ══════════════ -->
+  <footer class="case-footer">
+    <div>
+      <div class="footer-brand-big" aria-hidden="true">VIICTOR</div>
+    </div>
+    <div class="footer-links">
+      <a class="footer-link" href="screens/01-dashboard.html">View Dashboard Screen</a>
+      <a class="footer-link" href="screens/02-tournaments.html">View Tournaments Screen</a>
+      <a class="footer-link" href="brand-toolkit.html">View Brand Toolkit</a>
+      <a class="footer-link" href="CASE_STUDY.md">Read Full Case Study</a>
+    </div>
+  </footer>
+
+  <script>
+    // Scroll-triggered fade-ups
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+    // Score bar animation
+    const barObserver = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.querySelectorAll('.score-bar-fill').forEach(bar => {
+            bar.classList.add('visible-bar');
+          });
+        }
+      });
+    }, { threshold: 0.3 });
+
+    document.querySelectorAll('.score-bar-wrap').forEach(el => barObserver.observe(el));
+  </script>
+
+</body>
+</html>
