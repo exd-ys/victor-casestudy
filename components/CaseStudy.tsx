@@ -14,6 +14,7 @@ import {
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import ViictorDashboardPrototype from "./ViictorDashboardPrototype";
+import ViictorTournamentPrototype from "./ViictorTournamentPrototype";
 
 type ThemeMode = "light" | "dark";
 type NavMode = "hero" | "default" | "dark";
@@ -137,6 +138,7 @@ export default function CaseStudy() {
       gsap.set(".overview-aside", { opacity: 0, y: 28, scale: 0.97 });
       gsap.set(".solution-header", { opacity: 0, y: 18 });
       gsap.set(".deck-reveal", { opacity: 0, y: 28 });
+      gsap.set(".output-stage", { opacity: 0, y: 28 });
       gsap.set(".progress-left", { opacity: 0, y: 18 });
       gsap.set(".progress-cream", { opacity: 0, y: 18 });
       gsap.set(".progress-item", { opacity: 0, y: 10 });
@@ -214,13 +216,28 @@ export default function CaseStudy() {
           tl.to(header, { opacity: 1, y: 0, duration: 0.75, ease: "expo.out" });
         }
 
-        cards.forEach((card, i) => {
+        if (cards.length) {
           tl.to(
-            card,
-            { opacity: 1, y: 0, duration: 0.7, ease: "expo.out" },
-            i === 0 ? "-=0.35" : ">-0.15",
+            cards,
+            { opacity: 1, y: 0, duration: 0.8, ease: "expo.out", stagger: 0.13 },
+            "-=0.3",
           );
-        });
+        }
+      }
+
+      // -- Output - stage rises on scroll ----------------------------
+      const outputSection = document.querySelector("#output");
+      if (outputSection) {
+        const stage = outputSection.querySelector(".output-stage");
+        if (stage) {
+          gsap.to(stage, {
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            ease: "expo.out",
+            scrollTrigger: { trigger: stage, start: "top 88%", once: true },
+          });
+        }
       }
 
       // -- Problem - pinned scroll + nav dark mode -------------------
@@ -362,11 +379,20 @@ export default function CaseStudy() {
         <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-5 text-sm sm:px-8 lg:px-10">
           <a
             href="#top"
-            className={`font-semibold tracking-[-0.01em] transition-colors duration-300 ${
+            className={`nav-wordmark transition-colors duration-300 ${
               navMode === "dark" ? "text-white" : "text-[var(--forest)]"
             }`}
           >
-            Viictor / case study
+            <span className="nav-wordmark__brand">Viictor</span>
+            <span
+              className={`nav-wordmark__context transition-colors duration-300 ${
+                navMode === "dark"
+                  ? "text-white/45"
+                  : "text-[var(--soft)]"
+              }`}
+            >
+              / Case Study
+            </span>
           </a>
           <nav
             className={`hidden items-center gap-7 text-[0.82rem] font-medium transition-colors duration-300 sm:flex ${
@@ -403,16 +429,6 @@ export default function CaseStudy() {
             >
               Output
             </a>
-            <a
-              href="#progress"
-              className={
-                navMode === "dark"
-                  ? "hover:text-white"
-                  : "hover:text-[var(--forest)]"
-              }
-            >
-              Progress
-            </a>
           </nav>
         </div>
       </header>
@@ -448,7 +464,7 @@ export default function CaseStudy() {
 
       <section
         id="overview"
-        className="relative px-5 pb-36 pt-80 sm:px-8 sm:pb-44 sm:pt-88 lg:px-10 lg:pb-52 lg:pt-104"
+        className="relative px-5 pb-36 pt-80 sm:px-8 sm:pb-44 sm:pt-88 lg:px-10 lg:pb-52 lg:pt-140"
       >
         <div className="mx-auto max-w-6xl">
           <div className="overview-grid">
@@ -485,9 +501,12 @@ export default function CaseStudy() {
 
       <section
         id="problem"
-        className="relative flex min-h-screen items-center overflow-hidden px-5 py-20 sm:px-8 lg:px-10 lg:py-28"
+        className="relative flex min-h-screen items-center overflow-hidden px-5 py-36 sm:px-8 lg:px-10 lg:py-60"
         style={{ background: "linear-gradient(to bottom, #141514, #161b18)" }}
       >
+        {/* Ambient orbs */}
+        <div className="problem-orb" aria-hidden="true" />
+
         {/* Background texture */}
         <div
           className="pointer-events-none absolute inset-0"
@@ -566,6 +585,9 @@ export default function CaseStudy() {
                           key={title}
                           className={`problem-point ${isActive ? "problem-point--active" : ""}`}
                         >
+                          <span className="problem-point__num">
+                            0{index + 1}
+                          </span>
                           <h3
                             className={`display-sport text-[clamp(1.5rem,2.78vw,2.5rem)] leading-[1.15] transition-colors duration-500 ${
                               isActive
@@ -590,12 +612,29 @@ export default function CaseStudy() {
                   </div>
                 </div>
               </div>
+
+              {/* Scroll progress indicator */}
+              <div className="problem-progress" aria-hidden="true">
+                <div
+                  className="problem-progress-track"
+                  style={
+                    {
+                      "--fill": activeProblemIndex / 3,
+                    } as CSSProperties
+                  }
+                />
+                <span className="problem-progress-label">
+                  {activeProblemIndex === 0
+                    ? "— / 03"
+                    : `0${activeProblemIndex} / 03`}
+                </span>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      <section id="solution" className="px-5 py-20 sm:px-8 lg:px-10 lg:py-28">
+      <section id="solution" className="px-5 pt-20 pb-10 sm:px-8 lg:px-10 lg:pt-28 lg:pb-12">
         <div className="mx-auto max-w-7xl">
           <div className="solution-header text-center">
             <SectionHeader
@@ -607,17 +646,14 @@ export default function CaseStudy() {
           </div>
           <div className="solution-stack">
             {solutionMoves.map(([title, body], i) => {
-              const isDark = i === 1;
+              const variants = ["light", "green", "dark"] as const;
+              const tags = ["Principle", "System", "Principle"];
               return (
                 <article
                   key={title}
-                  className={`deck-reveal solution-card ${isDark ? "solution-card--dark" : ""}`}
-                  style={{ "--card-index": i } as CSSProperties}
+                  className={`deck-reveal solution-card solution-card--${variants[i]}`}
                 >
-                  <div className="solution-card__top">
-                    <span>{`0${i + 1}`}</span>
-                    <span>{isDark ? "System" : "Principle"}</span>
-                  </div>
+                  <span className="solution-card__label">{tags[i]}</span>
                   <div className="solution-card__content">
                     <h3 className="display-sport">{title}</h3>
                     <p>{body}</p>
@@ -629,7 +665,7 @@ export default function CaseStudy() {
         </div>
       </section>
 
-      <section id="output" className="px-5 py-20 sm:px-8 lg:px-10 lg:py-28">
+      <section id="output" className="px-5 pt-10 pb-20 sm:px-8 lg:px-10 lg:pt-12 lg:pb-28">
         <div className="mx-auto max-w-7xl">
           <div className="drift-in flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
             <h2 className="display-sport text-[clamp(2rem,3.33vw,3rem)] text-[var(--forest)]">
@@ -649,13 +685,6 @@ export default function CaseStudy() {
                   </button>
                 ))}
               </div>
-              <ThemeToggle
-                theme={theme}
-                onToggle={() =>
-                  setTheme((value) => (value === "light" ? "dark" : "light"))
-                }
-                compact
-              />
             </div>
           </div>
 
@@ -671,7 +700,9 @@ export default function CaseStudy() {
                 setExpandedAfterImage({ src, alt, title })
               }
               afterComponent={
-                activeOutputTab === 0 ? <ViictorDashboardPrototype /> : undefined
+                activeOutputTab === 0 ? <ViictorDashboardPrototype /> :
+                activeOutputTab === 1 ? <ViictorTournamentPrototype /> :
+                undefined
               }
             />
           </div>
@@ -968,9 +999,9 @@ function ComparisonBlock({
           figureClassName="comparison-img"
         />
         {afterComponent ? (
-          <div className="comparison-img flex justify-center items-start py-4">
+          <figure className="comparison-img flex justify-center items-start py-4">
             {afterComponent}
-          </div>
+          </figure>
         ) : (
           <ComparisonImage
             image={item.after}

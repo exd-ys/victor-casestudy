@@ -196,103 +196,96 @@ a {
 .solution-stack {
   margin: clamp(3.5rem, 8vh, 6rem) auto 0;
   display: grid;
-  max-width: 58rem;
-  gap: clamp(1.1rem, 2.5vh, 1.75rem);
-  padding-bottom: clamp(4rem, 12vh, 8rem);
+  max-width: 76rem;
+  gap: 1.25rem;
+}
+
+@media (min-width: 1024px) {
+  .solution-stack {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 .solution-card {
-  position: sticky;
-  top: calc(clamp(5rem, 11vh, 7rem) + (var(--card-index) * 1rem));
-  z-index: calc(1 + var(--card-index));
+  position: relative;
   display: flex;
-  min-height: clamp(20rem, 44vh, 27rem);
   flex-direction: column;
   justify-content: space-between;
-  border: 1px solid oklch(0.73 0.055 145 / 0.5);
-  border-radius: 28px;
-  background:
-    radial-gradient(
-      circle at 92% 18%,
-      oklch(0.72 0.13 145 / 0.22),
-      transparent 26%
-    ),
-    linear-gradient(
-      135deg,
-      oklch(0.97 0.018 145 / 0.96),
-      oklch(0.91 0.055 145 / 0.9)
-    ),
-    var(--green-soft);
-  box-shadow:
-    0 16px 34px oklch(0.18 0.04 145 / 0.08),
-    inset 0 1px 0 oklch(0.99 0.01 145 / 0.62);
-  padding: clamp(1.5rem, 4vw, 3rem);
+  gap: clamp(2.5rem, 6vh, 4rem);
+  border-radius: 20px;
+  padding: clamp(1.75rem, 3.5vw, 2.5rem);
   overflow: hidden;
+  min-height: clamp(21rem, 44vh, 32rem);
 }
 
+/* — Card 1: clean light — */
+.solution-card--light {
+  background: oklch(0.964 0.022 145);
+  border: 1px solid oklch(0.73 0.04 145 / 0.38);
+}
+
+/* — Card 2: green drenched — the one moment green owns a surface */
+.solution-card--green {
+  background: oklch(0.52 0.17 142);
+}
+
+/* — Card 3: dark — */
 .solution-card--dark {
-  border-color: oklch(0.72 0.08 146.3 / 0.58);
-  background:
-    linear-gradient(90deg, var(--green) 0 18%, transparent 18%),
-    radial-gradient(
-      circle at 88% 18%,
-      oklch(0.793 0.222 146.3 / 0.18),
-      transparent 31%
-    ),
-    linear-gradient(
-      135deg,
-      oklch(0.982 0.01 132 / 0.98),
-      oklch(0.925 0.05 146.3 / 0.94)
-    );
-  box-shadow:
-    0 16px 34px oklch(0.18 0.04 145 / 0.08),
-    inset 0 1px 0 oklch(0.99 0.01 145 / 0.64);
+  background: oklch(0.21 0.042 148);
 }
 
-.solution-card__top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid oklch(0.72 0.04 145 / 0.38);
-  padding-bottom: 1rem;
-  color: var(--soft);
-  font-size: 0.78rem;
-  font-weight: 800;
-  letter-spacing: 0.12em;
+/* — Shared label — */
+.solution-card__label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
   line-height: 1;
   text-transform: uppercase;
+  color: oklch(0.55 0.03 145);
 }
 
-.solution-card--dark .solution-card__top {
-  border-bottom-color: oklch(0.7 0.06 146.3 / 0.42);
-  color: var(--forest);
+.solution-card--green .solution-card__label {
+  color: oklch(0.82 0.1 145);
 }
 
+.solution-card--dark .solution-card__label {
+  color: oklch(0.52 0.17 142);
+}
+
+/* — Shared __content — */
 .solution-card__content {
   display: grid;
-  gap: clamp(1.5rem, 4vh, 2.5rem);
+  gap: clamp(0.9rem, 2vh, 1.25rem);
 }
 
 .solution-card__content h3 {
-  max-width: 11ch;
-  color: var(--forest);
-  font-size: clamp(2.3rem, 6vw, 4.4rem);
-  line-height: 0.98;
+  max-width: 10ch;
+  color: oklch(0.2 0.04 148);
+  font-size: clamp(2rem, 4.5vw, 3.75rem);
+  line-height: 0.97;
+}
+
+.solution-card--green .solution-card__content h3 {
+  color: oklch(0.97 0.01 145);
 }
 
 .solution-card--dark .solution-card__content h3 {
-  color: var(--forest);
+  color: oklch(0.965 0.015 145);
 }
 
 .solution-card__content p {
-  max-width: 36rem;
-  color: var(--soft);
-  font-size: clamp(1.05rem, 2vw, 1.5rem);
-  line-height: 1.55;
+  max-width: 28rem;
+  color: oklch(0.48 0.03 145);
+  font-size: clamp(0.9rem, 1.6vw, 1.06rem);
+  line-height: 1.65;
+}
+
+.solution-card--green .solution-card__content p {
+  color: oklch(0.88 0.07 145);
 }
 
 .solution-card--dark .solution-card__content p {
-  color: var(--soft);
+  color: oklch(0.66 0.03 145);
 }
 
 .deck-panel {
@@ -414,6 +407,70 @@ section[id] {
   filter: drop-shadow(0 18px 44px oklch(0.22 0.04 148 / 0.13));
 }
 
+/* Nav wordmark */
+.nav-wordmark {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  text-decoration: none;
+}
+.nav-wordmark__brand {
+  font-family: var(--font-oswald), "Oswald", ui-sans-serif, system-ui, sans-serif;
+  font-weight: 500;
+  font-size: 1.05rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+.nav-wordmark__context {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+/* Problem - ambient orbs */
+.problem-orb {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+.problem-orb::before {
+  content: "";
+  position: absolute;
+  width: min(55vw, 640px);
+  height: min(55vw, 640px);
+  border-radius: 50%;
+  top: -10%;
+  right: -12%;
+  background: radial-gradient(circle, oklch(0.38 0.09 142 / 0.32) 0%, transparent 68%);
+  animation: orb-a 14s ease-in-out infinite alternate;
+  will-change: transform;
+}
+.problem-orb::after {
+  content: "";
+  position: absolute;
+  width: min(38vw, 440px);
+  height: min(38vw, 440px);
+  border-radius: 50%;
+  bottom: -6%;
+  left: 8%;
+  background: radial-gradient(circle, oklch(0.30 0.06 148 / 0.22) 0%, transparent 68%);
+  animation: orb-b 20s ease-in-out infinite alternate;
+  will-change: transform;
+}
+@keyframes orb-a {
+  from { transform: translate(0, 0) scale(1); }
+  to { transform: translate(-7%, 8%) scale(1.12); }
+}
+@keyframes orb-b {
+  from { transform: translate(0, 0) scale(0.92); }
+  to { transform: translate(8%, -9%) scale(1.16); }
+}
+
 /* Problem */
 .problem-grid {
   display: grid;
@@ -425,7 +482,8 @@ section[id] {
 @media (min-width: 1024px) {
   .problem-grid {
     grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
-    min-height: calc(100vh - 14rem);
+    grid-template-rows: calc(100vh - 24rem);
+    align-items: center;
   }
 }
 .problem-sticky {
@@ -437,11 +495,17 @@ section[id] {
   .problem-sticky {
     position: static;
     transform: none;
+    height: 100%;
   }
 }
 .problem-phone-frame {
   width: min(100%, clamp(285px, 24vw, 335px));
   margin-inline: auto;
+  animation: phone-breathe 9s ease-in-out infinite;
+}
+@keyframes phone-breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.014); }
 }
 .problem-images {
   position: relative;
@@ -462,7 +526,8 @@ section[id] {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  min-height: calc(100vh - 14rem);
+  min-height: calc(100vh - 24rem);
+  position: relative;
 }
 
 .problem-copy-rail {
@@ -513,6 +578,75 @@ section[id] {
 
 .problem-point--active {
   opacity: 1;
+}
+
+/* Problem - number badge (slides in on activation) */
+.problem-point__num {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: oklch(0.72 0.18 142);
+  opacity: 0;
+  transform: translateX(-10px);
+  transition:
+    opacity 360ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 360ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.problem-point--active .problem-point__num {
+  opacity: 1;
+  transform: none;
+}
+
+/* Problem - heading snap-in on activation */
+.problem-point--active h3 {
+  animation: heading-snap 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes heading-snap {
+  from { transform: translateY(10px); }
+  to { transform: none; }
+}
+
+/* Problem - scroll progress indicator */
+.problem-progress {
+  display: none;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 2px;
+}
+@media (min-width: 1024px) {
+  .problem-progress {
+    display: flex;
+  }
+}
+.problem-progress-track {
+  position: relative;
+  width: 56px;
+  height: 1px;
+  background: oklch(0.32 0.01 145);
+  overflow: hidden;
+}
+.problem-progress-track::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: oklch(0.72 0.18 142);
+  transform-origin: left center;
+  transform: scaleX(var(--fill, 0));
+  transition: transform 680ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.problem-progress-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: oklch(0.42 0.015 145);
+  font-variant-numeric: tabular-nums;
+  transition: color 400ms ease;
 }
 
 /* Output — CSS-keyframe animations (fire on mount; work correctly with tab remounting) */
@@ -724,7 +858,10 @@ section[id] {
     transform: none;
   }
 
-  .reveal-halo {
+  .reveal-halo,
+  .problem-orb::before,
+  .problem-orb::after,
+  .problem-phone-frame {
     animation: none;
   }
 
@@ -740,10 +877,15 @@ section[id] {
   .problem-image,
   .problem-image--active,
   .problem-point,
+  .problem-point__num,
   .progress-item {
     opacity: 1;
     transform: none;
     transition: none;
+  }
+
+  .problem-point--active h3 {
+    animation: none;
   }
 
   .problem-copy-track {
@@ -758,6 +900,11 @@ section[id] {
     animation: none;
     opacity: 1;
     transform: none;
+  }
+
+  .output-stage {
+    opacity: 1 !important;
+    transform: none !important;
   }
 }
 
