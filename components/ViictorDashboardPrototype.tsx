@@ -65,8 +65,8 @@ export default function ViictorDashboardPrototype() {
     }));
   };
 
-  // Standard iPhone screen dimensions (375x667)
-  const SCREEN_WIDTH = 375;
+  // Mobile screen dimensions matching existing design (360x667)
+  const SCREEN_WIDTH = 360;
   const SCREEN_HEIGHT = 667;
   const STATUS_BAR_HEIGHT = 44;
   const HEADER_HEIGHT = 76;
