@@ -5,6 +5,7 @@ import {
   CSSProperties,
   KeyboardEvent,
   MouseEvent,
+  ReactNode,
   useEffect,
   useMemo,
   useRef,
@@ -12,6 +13,7 @@ import {
 } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import ViictorDashboardPrototype from "./ViictorDashboardPrototype";
 
 type ThemeMode = "light" | "dark";
 type NavMode = "hero" | "default" | "dark";
@@ -668,6 +670,9 @@ export default function CaseStudy() {
               onOpenAfter={(src, alt, title) =>
                 setExpandedAfterImage({ src, alt, title })
               }
+              afterComponent={
+                activeOutputTab === 0 ? <ViictorDashboardPrototype /> : undefined
+              }
             />
           </div>
         </div>
@@ -939,11 +944,13 @@ function ComparisonBlock({
   theme,
   onToggle,
   onOpenAfter,
+  afterComponent,
 }: {
   item: (typeof comparisons)[number] & { after: string };
   theme: ThemeMode;
   onToggle: () => void;
   onOpenAfter: (src: string, alt: string, title: string) => void;
+  afterComponent?: ReactNode;
 }) {
   return (
     <article className="comparison-block">
@@ -960,15 +967,21 @@ function ComparisonBlock({
           height={2340}
           figureClassName="comparison-img"
         />
-        <ComparisonImage
-          image={item.after}
-          alt={item.afterAlt}
-          width={804}
-          height={2036}
-          positive
-          figureClassName="comparison-img"
-          onOpen={() => onOpenAfter(item.after, item.afterAlt, item.title)}
-        />
+        {afterComponent ? (
+          <div className="comparison-img flex justify-center items-start py-4">
+            {afterComponent}
+          </div>
+        ) : (
+          <ComparisonImage
+            image={item.after}
+            alt={item.afterAlt}
+            width={804}
+            height={2036}
+            positive
+            figureClassName="comparison-img"
+            onOpen={() => onOpenAfter(item.after, item.afterAlt, item.title)}
+          />
+        )}
         <ComparisonNotes
           label="After"
           notes={item.afterNotes}
