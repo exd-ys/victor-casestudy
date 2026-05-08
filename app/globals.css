@@ -583,6 +583,9 @@ section[id] {
     min-height: 25vh;
     justify-content: center;
   }
+  .problem-point:last-child {
+    padding-bottom: 45vh;
+  }
 }
 
 .problem-item--active {
