@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import {
-  CSSProperties,
   KeyboardEvent,
   MouseEvent,
   ReactNode,
@@ -240,36 +239,29 @@ export default function CaseStudy() {
         }
       }
 
-      // -- Problem - pinned scroll + nav dark mode -------------------
+      // -- Problem - sticky phone, scrolling text + nav dark mode -------------------
       const problemSection = document.querySelector("#problem");
       if (problemSection) {
-        let lastIdx = -1;
-
-        // Nav turns dark while problem is pinned
         ScrollTrigger.create({
           trigger: problemSection,
           start: "top top",
-          end: () => `+=${window.innerHeight * 3}`,
+          end: "bottom top",
           onEnter: () => setNavMode("dark"),
           onLeaveBack: () => setNavMode("default"),
           onLeave: () => setNavMode("default"),
           onEnterBack: () => setNavMode("dark"),
         });
 
-        // Pin the section; advance through the intro plus 3 problem items
-        ScrollTrigger.create({
-          trigger: problemSection,
-          start: "top top",
-          end: () => `+=${window.innerHeight * 3}`,
-          pin: true,
-          anticipatePin: 1,
-          onUpdate: (self) => {
-            const next = Math.min(Math.floor(self.progress * 4), 3);
-            if (next !== lastIdx) {
-              lastIdx = next;
-              setActiveProblemIndex(next);
-            }
-          },
+        const problemItems = problemSection.querySelectorAll("[data-problem-index]");
+        problemItems.forEach((item) => {
+          const idx = Number((item as HTMLElement).dataset.problemIndex);
+          ScrollTrigger.create({
+            trigger: item,
+            start: "center center",
+            end: "center center",
+            onEnter: () => setActiveProblemIndex(idx),
+            onEnterBack: () => setActiveProblemIndex(idx),
+          });
         });
       }
 
@@ -344,6 +336,42 @@ export default function CaseStudy() {
     );
 
     observer.observe(heroSection);
+    return () => observer.disconnect();
+  }, []);
+
+  // Mobile-only: fade items as they centre in the viewport (desktop uses GSAP pin)
+  useEffect(() => {
+    if (window.innerWidth >= 1024) return;
+    const items = document.querySelectorAll<HTMLElement>("[data-problem-index]");
+    if (!items.length) return;
+
+    const ratios = new Map<number, number>();
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const idx = parseInt(
+            entry.target.getAttribute("data-problem-index") ?? "0",
+            10,
+          );
+          ratios.set(idx, entry.isIntersecting ? entry.intersectionRatio : 0);
+        });
+
+        let bestIdx = 0;
+        let bestRatio = -1;
+        ratios.forEach((ratio, idx) => {
+          if (ratio > bestRatio) {
+            bestRatio = ratio;
+            bestIdx = idx;
+          }
+        });
+
+        setActiveProblemIndex(bestIdx);
+      },
+      { threshold: [0, 0.25, 0.5, 0.75, 1] },
+    );
+
+    items.forEach((el) => observer.observe(el));
     return () => observer.disconnect();
   }, []);
 
@@ -501,7 +529,7 @@ export default function CaseStudy() {
 
       <section
         id="problem"
-        className="relative flex min-h-screen items-center overflow-hidden px-5 py-36 sm:px-8 lg:px-10 lg:py-60"
+        className="relative flex px-5 py-20 sm:px-8 lg:px-10 lg:py-28"
         style={{ background: "linear-gradient(to bottom, #141514, #161b18)" }}
       >
         {/* Ambient orbs */}
@@ -521,15 +549,11 @@ export default function CaseStudy() {
         </div>
 
         <div className="relative mx-auto max-w-7xl">
-          <div
-            className="problem-grid"
-            style={{ "--problem-step": activeProblemIndex } as CSSProperties}
-          >
-            {/* Left: centered phone mockup */}
+          <div className="problem-grid">
+            {/* Left: phone mockup — sticky on desktop, image swaps at problem 3 */}
             <div className="problem-sticky">
               <div className="problem-phone-frame">
                 <div className="problem-images mockup-wrap">
-                  {/* Image 1: visible for the intro and dashboard issues */}
                   <figure
                     className={`problem-image ${activeProblemIndex <= 2 ? "problem-image--active" : ""}`}
                   >
@@ -541,7 +565,6 @@ export default function CaseStudy() {
                       className="w-full object-contain"
                     />
                   </figure>
-                  {/* Image 2: visible for the tournament scanning issue */}
                   <figure
                     className={`problem-image ${activeProblemIndex >= 3 ? "problem-image--active" : ""}`}
                   >
@@ -557,78 +580,47 @@ export default function CaseStudy() {
               </div>
             </div>
 
-            {/* Right: the whole text stack scrolls as one list */}
+            {/* Right: scroll-driven track, clipped inside .problem-copy */}
             <div className="problem-copy">
-              <div className="problem-copy-rail">
-                <div className="problem-copy-track">
-                  <article
-                    className={`problem-copy-intro ${activeProblemIndex === 0 ? "problem-point--active" : ""}`}
-                  >
-                    <p className="font-bold text-[clamp(1rem,1.5vw,1.5rem)] leading-[1.5] text-[oklch(0.72_0.18_142)]">
-                      Problem
-                    </p>
-                    <h2 className="display-sport text-[clamp(2rem,3.33vw,3rem)] text-[var(--cream)]">
-                      The ingredients were right; the interface undermined
-                      trust.
-                    </h2>
-                    <p className="text-[clamp(1rem,1.5vw,1.25rem)] leading-[1.55] text-[oklch(0.6_0.012_145)]">
-                      Core features were already in place, but players spent
-                      extra effort understanding screens, finding next steps,
-                      and comparing options under match-day pressure.
-                    </p>
-                  </article>
-                  <div className="problem-points-group">
-                    {problems.map(([title, body], index) => {
-                      const isActive = activeProblemIndex === index + 1;
-                      return (
-                        <article
-                          key={title}
-                          className={`problem-point ${isActive ? "problem-point--active" : ""}`}
-                        >
-                          <span className="problem-point__num">
-                            0{index + 1}
-                          </span>
-                          <h3
-                            className={`display-sport text-[clamp(1.5rem,2.78vw,2.5rem)] leading-[1.15] transition-colors duration-500 ${
-                              isActive
-                                ? "text-[var(--cream)]"
-                                : "text-[#474747]"
-                            }`}
-                          >
-                            {title}
-                          </h3>
-                          <p
-                            className={`text-[clamp(1rem,1.5vw,1.25rem)] leading-[1.55] transition-colors duration-500 ${
-                              isActive
-                                ? "text-[oklch(0.6_0.012_145)]"
-                                : "text-[#3d3d3d]"
-                            }`}
-                          >
-                            {body}
-                          </p>
-                        </article>
-                      );
-                    })}
-                  </div>
+              <div className="problem-copy-track">
+                <article
+                  className={`problem-copy-intro ${activeProblemIndex === 0 ? "problem-item--active" : ""}`}
+                  data-problem-index="0"
+                >
+                  <p className="font-bold text-[clamp(1rem,1.5vw,1.5rem)] leading-[1.5] text-[oklch(0.72_0.18_142)]">
+                    Problem
+                  </p>
+                  <h2 className="display-sport text-[clamp(2rem,3.33vw,3rem)] text-[var(--cream)]">
+                    The ingredients were right; the interface undermined
+                    trust.
+                  </h2>
+                  <p className="text-[clamp(1rem,1.5vw,1.25rem)] leading-[1.55] text-[oklch(0.6_0.012_145)]">
+                    Core features were already in place, but players spent
+                    extra effort understanding screens, finding next steps,
+                    and comparing options under match-day pressure.
+                  </p>
+                </article>
+                <div className="problem-points-group">
+                  {problems.map(([title, body], index) => {
+                    const isActive = activeProblemIndex === index + 1;
+                    return (
+                      <article
+                        key={title}
+                        className={`problem-point ${isActive ? "problem-item--active" : ""}`}
+                        data-problem-index={index + 1}
+                      >
+                        <span className="problem-point__num">0{index + 1}</span>
+                        <h3 className="display-sport text-[clamp(1.5rem,2.78vw,2.5rem)] leading-[1.15] text-[var(--cream)]">
+                          {title}
+                        </h3>
+                        <p className="text-[clamp(1rem,1.5vw,1.25rem)] leading-[1.55] text-[oklch(0.6_0.012_145)]">
+                          {body}
+                        </p>
+                      </article>
+                    );
+                  })}
                 </div>
-              </div>
-
-              {/* Scroll progress indicator */}
-              <div className="problem-progress" aria-hidden="true">
-                <div
-                  className="problem-progress-track"
-                  style={
-                    {
-                      "--fill": activeProblemIndex / 3,
-                    } as CSSProperties
-                  }
-                />
-                <span className="problem-progress-label">
-                  {activeProblemIndex === 0
-                    ? "— / 03"
-                    : `0${activeProblemIndex} / 03`}
-                </span>
-              </div>
+              </div>{/* end problem-copy-track */}
             </div>
           </div>
         </div>
